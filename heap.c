@@ -28,7 +28,7 @@ heap* new_heap(int size){
   temp_heap->active_side = true;
 
   temp_heap->left_side = (heap_side*)malloc(sizeof(heap_side));
-  temp_heap->right_side = (heap_side*)malloc(sizeof(heap_side));
+  //temp_heap->right_side = (heap_side*)malloc(sizeof(heap_side));
 
   temp_heap->left_side->size = size;
   temp_heap->right_side->size = size;
@@ -88,10 +88,13 @@ void print_heap(heap* heap){ /*Mainly a test function, will never be used in
 int main (int argc, char* argv[]){
   heap* heap_test = new_heap(20);
   printf("Size: %d", get_size(heap_test));
-  
-  write_to_heap(heap_test, 99);
-  write_to_heap(heap_test, 98);
+
+  for (int i = 0; i < 22; i++) {
+      write_to_heap(heap_test, 99-i);
+  }
   print_heap(heap_test);
+
+  printf("Size: %d", heap_test->left_side->size);
   //int* test_int = (int*)malloc(sizeof(int));
   //*test_int = 99;
   //void* first_free = (void*)get_first(heap_test);
