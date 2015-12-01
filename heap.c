@@ -35,7 +35,7 @@ heap* new_heap(int size){
   temp_heap->right_side->size = size;
 
   temp_heap->left_side->start = (uintptr_t)malloc(sizeof(int)*size);
-  //temp_heap->right_side->start = (uintptr_t)malloc(sizeof(int)*size);
+  temp_heap->right_side->start = (uintptr_t)malloc(sizeof(int)*size);
 
   temp_heap->left_side->last_block = (temp_heap->left_side->start +
 				      (sizeof(int)*size) );
@@ -60,7 +60,7 @@ uint32_t get_first(heap* heap){
 }
 
 bool write_to_left(heap* heap, int value){
-  uintptr_t* first_free = (int*)heap->left_side->first_free;
+  int* first_free = (int*)heap->left_side->first_free;
   if (heap->left_side->first_free >= heap->left_side->last_block ||
       heap->left_side->first_free < heap->left_side->start) {
     return false;
@@ -115,7 +115,7 @@ int main (int argc, char* argv[]){
   printf("Size: %d", get_size(heap_test));
 
   for (int i = 0; i < 1000; i++) {
-    if (!write_to_heap(heap_test, 99-i)) printf("%d: Heap is full!\n", i);;
+    if (!write_to_heap(heap_test, (-99)-i)) printf("%d: Heap is full!\n", i);;
   }
   print_heap(heap_test);
 
