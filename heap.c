@@ -28,7 +28,7 @@ heap* new_heap(int size){
   temp_heap->active_side = true;
 
   temp_heap->left_side = (heap_side*)malloc(sizeof(heap_side));
-  //temp_heap->right_side = (heap_side*)malloc(sizeof(heap_side));
+  temp_heap->right_side = (heap_side*)malloc(sizeof(heap_side));
 
   temp_heap->left_side->size = size;
   temp_heap->right_side->size = size;
