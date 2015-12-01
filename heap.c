@@ -8,6 +8,7 @@ struct heap_side {
   int size;
   uintptr_t start;
   uintptr_t first_free;
+  uintptr_t last_block;
 };
 
 typedef struct heap_side heap_side;
@@ -34,7 +35,12 @@ heap* new_heap(int size){
   temp_heap->right_side->size = size;
 
   temp_heap->left_side->start = (uintptr_t)malloc(sizeof(int)*size);
-  temp_heap->right_side->start = (uintptr_t)malloc(sizeof(int)*size);
+  //temp_heap->right_side->start = (uintptr_t)malloc(sizeof(int)*size);
+
+  temp_heap->left_side->last_block = (temp_heap->left_side->start +
+				      (sizeof(int)*size) );
+  temp_heap->right_side->last_block = (temp_heap->right_side->start +
+				       (sizeof(int)*size) );
 
   temp_heap->left_side->first_free = temp_heap->left_side->start;
   temp_heap->right_side->first_free = temp_heap->right_side->start;
@@ -54,9 +60,12 @@ uint32_t get_first(heap* heap){
 }
 
 bool write_to_left(heap* heap, int value){
-  int* first_free = (int*)heap->left_side->first_free;
+  uintptr_t* first_free = (int*)heap->left_side->first_free;
+  if (heap->left_side->first_free >= heap->left_side->last_block) {
+    return false;
+  }
   *first_free = value;
-  heap->left_side->first_free = (heap->left_side->first_free) + sizeof(int);
+  heap->left_side->first_free = (heap->left_side->first_free)+sizeof(int);
   return true;
 }
 
@@ -89,12 +98,14 @@ int main (int argc, char* argv[]){
   heap* heap_test = new_heap(20);
   printf("Size: %d", get_size(heap_test));
 
-  for (int i = 0; i < 18; i++) {
-      write_to_heap(heap_test, 99-i);
+  for (int i = 0; i < 1000; i++) {
+    if (!write_to_heap(heap_test, 99-i)) printf("%d: Heap is full!\n", i);;
   }
   print_heap(heap_test);
 
   printf("Size1: %d", heap_test->left_side->size);
+  return 1;
+  
   //int* test_int = (int*)malloc(sizeof(int));
   //*test_int = 99;
   //void* first_free = (void*)get_first(heap_test);
