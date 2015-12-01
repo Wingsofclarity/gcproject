@@ -89,12 +89,12 @@ int main (int argc, char* argv[]){
   heap* heap_test = new_heap(20);
   printf("Size: %d", get_size(heap_test));
 
-  for (int i = 0; i < 22; i++) {
+  for (int i = 0; i < 18; i++) {
       write_to_heap(heap_test, 99-i);
   }
   print_heap(heap_test);
 
-  printf("Size: %d", heap_test->left_side->size);
+  printf("Size1: %d", heap_test->left_side->size);
   //int* test_int = (int*)malloc(sizeof(int));
   //*test_int = 99;
   //void* first_free = (void*)get_first(heap_test);
