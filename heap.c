@@ -37,6 +37,8 @@ heap* new_heap(int sizet){
 
   temp_heap->left_side->first_free = temp_heap->left_side->start;
   temp_heap->right_side->first_free = temp_heap->right_side->start;
+  
+  return temp_heap;
 }
 
 int get_size(heap* heap){
