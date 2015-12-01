@@ -61,7 +61,8 @@ uint32_t get_first(heap* heap){
 
 bool write_to_left(heap* heap, int value){
   uintptr_t* first_free = (int*)heap->left_side->first_free;
-  if (heap->left_side->first_free >= heap->left_side->last_block) {
+  if (heap->left_side->first_free >= heap->left_side->last_block ||
+      heap->left_side->first_free < heap->left_side->start) {
     return false;
   }
   *first_free = value;
@@ -76,6 +77,21 @@ bool write_to_heap(heap* heap, int value){
   else {
     return false;
   }
+}
+
+bool change_to_right(heap* head){
+  
+}
+
+bool change_to_left(heap* head){
+
+}
+
+bool change_side(heap* heap){
+  if (heap->active_side){ //left is active
+    return change_to_right(heap);
+  }
+  else return change_to_left(heap);
 }
 
 void print_heap(heap* heap){ /*Mainly a test function, will never be used in
