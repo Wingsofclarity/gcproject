@@ -81,6 +81,7 @@ void print_heap(heap* heap){ /*Mainly a test function, will never be used in
     for (; start < end; start = start + sizeof(int)) {
       printf("\n%d: %d", i++, *((int*)start));
     }
+    printf("\n");
   }
 }
 
