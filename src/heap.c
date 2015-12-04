@@ -6,6 +6,7 @@
 
 struct heap_side {
   int size;
+  
   uintptr_t start;
   uintptr_t first_free;
   uintptr_t last_block;
@@ -24,6 +25,8 @@ struct heap {
 typedef struct heap heap;
 
 heap* new_heap(int size){
+  //The heap currently only works with ints, as the implemenation details
+  //will mean the allocation is done differently.
   heap* temp_heap = (heap*)malloc(sizeof(heap));;
   temp_heap->size = size;
   temp_heap->active_side = true;
@@ -80,11 +83,11 @@ bool write_to_heap(heap* heap, int value){
 }
 
 bool change_to_right(heap* head){
-  
+  return false;
 }
 
 bool change_to_left(heap* head){
-
+  return false;
 }
 
 bool change_side(heap* heap){
@@ -94,8 +97,8 @@ bool change_side(heap* heap){
   else return change_to_left(heap);
 }
 
-void print_heap(heap* heap){ /*Mainly a test function, will never be used in
-			       testing*/
+void print_heap(heap* heap){ /*Mainly a test function, 
+			       will never be used outside tests*/
   if (heap->active_side){
     uintptr_t start = heap->left_side->start;
     uintptr_t end = heap->left_side->first_free;
