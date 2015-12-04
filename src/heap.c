@@ -31,22 +31,26 @@ heap* new_heap(int size){
   temp_heap->size = size;
   temp_heap->active_side = true;
 
-  temp_heap->left_side = (heap_side*)malloc(sizeof(heap_side));
-  temp_heap->right_side = (heap_side*)malloc(sizeof(heap_side));
+  int intsize = sizeof(int);
+  int ptrsize = sizeof(uintptr_t);
 
-  temp_heap->left_side->size = size;
-  temp_heap->right_side->size = size;
+  heap_side* leftside = (heap_side*)malloc(sizeof(heap_side));
+  heap_side* rightside = (heap_side*)malloc(sizeof(heap_side));
+  
+  leftside->size = size;
+  rightside->size = size;
 
-  temp_heap->left_side->start = (uintptr_t)malloc(sizeof(int)*size);
-  temp_heap->right_side->start = (uintptr_t)malloc(sizeof(int)*size);
+  leftside->start = (uintptr_t)malloc( (intsize + ptrsize) * size );
+  rightside->start = (uintptr_t)malloc(sizeof(int)*size);
 
-  temp_heap->left_side->last_block = (temp_heap->left_side->start +
-				      (sizeof(int)*size) );
-  temp_heap->right_side->last_block = (temp_heap->right_side->start +
-				       (sizeof(int)*size) );
+  leftside->last_block = (leftside->start + ((intsize + ptrsize) * size) );
+  rightside->last_block = (rightside->start + ((intsize + ptrsize) *size));
 
-  temp_heap->left_side->first_free = temp_heap->left_side->start;
-  temp_heap->right_side->first_free = temp_heap->right_side->start;
+  leftside->first_free = leftside->start;
+  rightside->first_free = rightside->start;
+
+  temp_heap->left_side = leftside;
+  temp_heap->right_side = rightside;
   
   return temp_heap;
 }
@@ -62,24 +66,30 @@ uint32_t get_first(heap* heap){
   return 0;
 }
 
-bool write_to_left(heap* heap, int value){
-  int* first_free = (int*)heap->left_side->first_free;
-  if (heap->left_side->first_free >= heap->left_side->last_block ||
-      heap->left_side->first_free < heap->left_side->start) {
+void* read_formatstring(char formatstring[]){
+  return NULL;
+}
+
+bool write_to_side(heap_side* heapside, int value, char formatstring[]){
+  //void* header = read_formatstring(formatstring);
+  int* first_free = (int*)heapside->first_free;
+  if (heapside->first_free >= heapside->last_block ||
+      heapside->first_free < heapside->start) {
     return false;
   }
   *first_free = value;
-  heap->left_side->first_free = (heap->left_side->first_free)+sizeof(int);
+  heapside->first_free = (heapside->first_free)+sizeof(int)+sizeof(uintptr_t);
   return true;
 }
 
-bool write_to_heap(heap* heap, int value){
+bool write_to_heap(heap* heap, int value, char formatstring[]){
   if (heap->active_side){
-    return write_to_left(heap, value);
+    return write_to_side(heap->left_side, value, formatstring);
   }
   else {
-    return false;
+    return write_to_side(heap->right_side, value, formatstring);
   }
+  return false;
 }
 
 bool change_to_right(heap* head){
@@ -106,19 +116,23 @@ void print_heap(heap* heap){ /*Mainly a test function,
     
     
     int i = 0;
-    for (; start < end; start = start + sizeof(int)) {
+    printf("\n%d sizeof(int). %d sizeof(void*)\n", sizeof(int),
+	   sizeof(end));
+    for (; start < end; start = start + sizeof(int) + sizeof(uintptr_t)) {
       printf("\n%d: %d", i++, *((int*)start));
     }
-    printf("\n");
+    printf("\nPrinted %d objects\n\n", i);
   }
 }
 
 int main (int argc, char* argv[]){
   heap* heap_test = new_heap(20);
-  printf("Size: %d", get_size(heap_test));
-
-  for (int i = 0; i < 1000; i++) {
-    if (!write_to_heap(heap_test, (-99)-i)) printf("%d: Heap is full!\n", i);;
+  //printf("Size: %d\n", get_size(heap_test));
+  char test[] = "test";
+  for (int i = 0; i < 25; i++) {
+    if (!write_to_heap(heap_test, (99)-i, test) ) {
+      //printf("%d: Heap is full!\n", i);
+    }
   }
   print_heap(heap_test);
 
