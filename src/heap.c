@@ -17,7 +17,7 @@ struct heap_side {
   uintptr_t start;
   uintptr_t first_free;
   uintptr_t last_block;
-};
+};a
 
 typedef struct heap_side heap_side;
 
@@ -71,7 +71,7 @@ uint32_t get_first(heap* heap){
 
 bool write_to_side(heap_side* heapside, int value, char formatstring[]){
   uintptr_t header = read_formatstring(formatstring);
-  if ( header != 0 ) printf("Header: %d\n", header);
+  //if ( header != 0 ) printf("Header: %d\n", header);
   int* first_free = (int*)heapside->first_free;
   if (heapside->first_free >= heapside->last_block ||
       heapside->first_free < heapside->start) {

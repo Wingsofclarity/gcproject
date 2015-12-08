@@ -7,10 +7,11 @@
 
 int main (int argc, char* argv[]){
   heap* heap_test = new_heap(20);
+  printf("sizeof(uintptr_t): %d\n", sizeof(uintptr_t));
   //printf("Size: %d\n", get_size(heap_test));
-  char test[] = "**i*i**iiii*";
+  char test[] = "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiicclliififd";
   for (int i = 0; i < 25; i++) {
-    if (!write_to_heap(heap_test, (99)-i, test) ) {
+    if (!write_to_heap(heap_test, (59)-i, test) ) {
       //printf("%d: Heap is full!\n", i);
     }
   }
