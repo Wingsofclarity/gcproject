@@ -1,9 +1,12 @@
-#include <stdbool.h> //For returns of functions.
+#include <stdbool.h> //For true .
 #include <stdlib.h> 
 #include <stdio.h> //For error checking
 #include <string.h>
 #include <stdint.h>
+
 #include <math.h> //For squareing in bit operations
+
+#include "heap.h"
 
 #define INTSIZE sizeof(int)
 #define PTRSIZE sizeof(uintptr_t)
@@ -24,7 +27,6 @@ struct heap {
   int size;
   bool active_side; //true for left, false for right.
 };
-
 
 typedef struct heap heap;
 
@@ -65,42 +67,6 @@ uint32_t get_first(heap* heap){
     return (heap->left_side->first_free);
   }
   return 0;
-}
-
-uintptr_t set_header_size(char formatstring[]){
-  return 0;
-}
-
-int int_pow (int base, int exponent){
-  if (exponent == 0) return 1;
-
-  int result = base;
-  for (int i = 1; i < exponent; i++){
-    result = result * base;
-  }
-  return result;
-}
-
-uintptr_t read_formatstring(char formatstring[]){
-  size_t len = strlen( formatstring );
-  uintptr_t formatbinary = 0;
-  if ( len > ( (PTRSIZE * 8) - 3)  ){
-    set_header_size( formatstring );
-  }
-  else {
-    printf("\n");
-    for (int i = (len - 1); i >= 0; i--) {
-      printf("Character %d: %c\n", i, formatstring[i]);
-      if ( formatstring[i] == '*' ){ //If pointer, set bit to 1.
-	formatbinary = ( formatbinary | int_pow(2, i) ); //
-      }
-      // Else keep as 0 because databit should be 0;
-    }
-  }
-  printf("formatbinary: %d\n", formatbinary);
-  formatbinary = formatbinary << 2; /* Shift two steps left so we have room
-				       for the instruction bits */
-  return formatbinary;
 }
 
 bool write_to_side(heap_side* heapside, int value, char formatstring[]){
@@ -159,23 +125,3 @@ void print_heap(heap* heap){ /*Mainly a test function,
   }
 }
 
-int main (int argc, char* argv[]){
-  heap* heap_test = new_heap(20);
-  //printf("Size: %d\n", get_size(heap_test));
-  char test[] = "**i*i**iiii*";
-  for (int i = 0; i < 25; i++) {
-    if (!write_to_heap(heap_test, (99)-i, test) ) {
-      //printf("%d: Heap is full!\n", i);
-    }
-  }
-  print_heap(heap_test);
-
-  printf("Size1: %d", heap_test->left_side->size);
-  return 1;
-  
-  //int* test_int = (int*)malloc(sizeof(int));
-  //*test_int = 99;
-  //void* first_free = (void*)get_first(heap_test);
-  //memcpy(first_free, test_int, sizeof(int));
-  //printf("\nInt is: %d", *((int*)first_free));
-}
