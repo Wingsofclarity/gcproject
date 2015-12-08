@@ -34,3 +34,6 @@
 
 # Compiled files
 main
+
+# Emacs weird files
+*~
