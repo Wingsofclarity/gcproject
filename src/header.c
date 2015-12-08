@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <ctype.h> //isdigit() in translate_formatstring.
 #include <stdbool.h> //temp in isdigit, remove.
+#include <inttypes.h>
 
 #include "header.h"
 
@@ -74,6 +75,8 @@ uintptr_t read_formatstring(char* formatstring){
       }
     }
   }
+  //printf("formatbinary: %"PRIuPTR"\n", formatbinary);
+
   formatbinary = formatbinary << 2; /* Shift two steps left so we have room
 				       for the instruction bits */
   return formatbinary;

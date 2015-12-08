@@ -3,9 +3,9 @@
 #include <stdio.h> //For error checking
 #include <string.h>
 #include <stdint.h>
-
+#include <inttypes.h>
 #include <math.h> //For squareing in bit operations
-
+#include "header.h"
 #include "heap.h"
 
 #define INTSIZE sizeof(int)
@@ -71,7 +71,9 @@ uint32_t get_first(heap* heap){
 
 bool write_to_side(heap_side* heapside, int value, char formatstring[]){
   uintptr_t header = read_formatstring(formatstring);
-  //if ( header != 0 ) printf("Header: %d\n", header);
+
+  //if ( header != 0 ) printf("Header: %"PRIuPTR"\n", header);
+ 
   int* first_free = (int*)heapside->first_free;
   if (heapside->first_free >= heapside->last_block ||
       heapside->first_free < heapside->start) {
@@ -93,11 +95,15 @@ bool write_to_heap(heap* heap, int value, char formatstring[]){
 } 
 
 bool change_to_right(heap* head){
-  return false;
+  head->active_side = false;
+  head->left_side->first_free = head->left_side->start;
+  return true;
 }
 
 bool change_to_left(heap* head){
-  return false;
+  head->active_side = true;
+  head->right_side->first_free = head->right_side->start;
+  return true;
 }
 
 bool change_side(heap* heap){
@@ -116,7 +122,7 @@ void print_heap(heap* heap){ /*Mainly a test function,
     
     
     int i = 0;
-    printf("\n%d sizeof(int). %d sizeof(uintptr_t)\n", INTSIZE,
+    printf("\n%"PRIuPTR" sizeof(int). %"PRIuPTR" sizeof(uintptr_t)\n", INTSIZE,
 	   PTRSIZE);
     for (; start < end; start = start + INTSIZE + PTRSIZE) {
       printf("\n%d: %d", i++, *((int*)start));

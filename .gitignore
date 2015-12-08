@@ -1,5 +1,6 @@
 # Object files
 *.o
+*.d
 *.ko
 *.obj
 *.elf
@@ -30,3 +31,6 @@
 
 # Debug files
 *.dSYM/
+
+# Compiled files
+main
