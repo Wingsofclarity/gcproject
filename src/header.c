@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
-
+#include <inttypes.h>
 #include "header.h"
 
 /*#define INTSIZE sizeof(int)*/
@@ -39,7 +39,7 @@ uintptr_t read_formatstring(char formatstring[]){
       // Else keep as 0 because databit should be 0;
     }
   }
-  printf("formatbinary: %lu\n", formatbinary);
+  printf("formatbinary: %"PRIuPTR"\n", formatbinary);
   formatbinary = formatbinary << 2; /* Shift two steps left so we have room
 				       for the instruction bits */
   return formatbinary;
