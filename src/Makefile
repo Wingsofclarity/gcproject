@@ -28,3 +28,6 @@ gdb:
 clean:
 	-rm -f *.o
 	-rm -f $(TARGET)
+clean-win:
+	-del *.o
+	-del $(TARGET)
