@@ -5,7 +5,7 @@
 #include <stdint.h>
 
 #include <math.h> //For squareing in bit operations
-
+#include "header.h"
 #include "heap.h"
 
 #define INTSIZE sizeof(int)
@@ -71,7 +71,7 @@ uint32_t get_first(heap* heap){
 
 bool write_to_side(heap_side* heapside, int value, char formatstring[]){
   uintptr_t header = read_formatstring(formatstring);
-  if ( header != 0 ) printf("Header: %d\n", (int)header);
+  if ( header != 0 ) printf("Header: %lu\n", header);
   int* first_free = (int*)heapside->first_free;
   if (heapside->first_free >= heapside->last_block ||
       heapside->first_free < heapside->start) {
@@ -116,8 +116,8 @@ void print_heap(heap* heap){ /*Mainly a test function,
     
     
     int i = 0;
-    printf("\n%d sizeof(int). %d sizeof(uintptr_t)\n", (int)INTSIZE,
-	   (int)PTRSIZE);
+    printf("\n%lu sizeof(int). %lu sizeof(uintptr_t)\n", INTSIZE,
+	   PTRSIZE);
     for (; start < end; start = start + INTSIZE + PTRSIZE) {
       printf("\n%d: %d", i++, *((int*)start));
     }

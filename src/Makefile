@@ -1,7 +1,7 @@
-TARGET = heap
+TARGET = main
 LIBS = -lm
 CC = gcc
-CFLAGS = -ggdb -Wall -std=c11
+CFLAGS = -ggdb -Wall -Werror -std=c11
 
 default: $(TARGET) run
 all: default
