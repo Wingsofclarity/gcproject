@@ -93,11 +93,15 @@ bool write_to_heap(heap* heap, int value, char formatstring[]){
 } 
 
 bool change_to_right(heap* head){
-  return false;
+  head->active_side = false;
+  head->left_side->first_free = head->left_side->start;
+  return true;
 }
 
 bool change_to_left(heap* head){
-  return false;
+  head->active_side = true;
+  head->right_side->first_free = head->right_side->start;
+  return true;
 }
 
 bool change_side(heap* heap){
