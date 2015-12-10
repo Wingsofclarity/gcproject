@@ -21,8 +21,8 @@ int main (int argc, char* argv[]){
   return 1;
 */
 
-  char* teststring = "iii23*";
-  printf("%s\n", teststring);
+  char* teststring = "*2d4i2*";
+  printf("\n%s\n", teststring);
   teststring = translate_formatstring( teststring );
   printf("HEJSAN %s\n", teststring);
   

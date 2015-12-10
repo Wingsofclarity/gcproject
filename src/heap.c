@@ -44,8 +44,8 @@ heap* new_heap(int size){
   leftside->start = (uintptr_t)malloc( (INTSIZE + PTRSIZE) * size );
   rightside->start = (uintptr_t)malloc( (INTSIZE + PTRSIZE) * size);
 
-  leftside->last_block = (leftside->start + ((INTSIZE + PTRSIZE) * size) );
-  rightside->last_block = (rightside->start + ((INTSIZE + PTRSIZE) *size));
+  leftside->last_block = (leftside->start + ( (INTSIZE + PTRSIZE)*size));
+  rightside->last_block =(rightside->start + ((INTSIZE + PTRSIZE)*size));
 
   leftside->first_free = leftside->start;
   rightside->first_free = rightside->start;
@@ -67,14 +67,14 @@ uint32_t get_first(heap* heap){
   return 0;
 }
 
-bool write_to_side(heap_side* heapside, int value, char formatstring[]){
+bool write_to_side(heap_side* heapside, int value, char* formatstring){
   uintptr_t header = read_formatstring(formatstring);
 
   if ( header != 0 ) printf("Header: %"PRIuPTR"\n", header);
  
   int* first_free = (int*)heapside->first_free;
   if (heapside->first_free >= heapside->last_block ||
-      heapside->first_free < heapside->start) {
+      heapside->first_free < heapside->start) { 
     return false;
   }
   *first_free = value;
@@ -82,7 +82,7 @@ bool write_to_side(heap_side* heapside, int value, char formatstring[]){
   return true;
 }
 
-bool write_to_heap(heap* heap, int value, char formatstring[]){
+bool write_to_heap(heap* heap, int value, char* formatstring){
   if (heap->active_side){
     return write_to_side(heap->left_side, value, formatstring);
   }

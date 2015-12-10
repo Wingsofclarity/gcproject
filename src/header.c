@@ -59,10 +59,7 @@ uintptr_t set_header_size(char* formatstring){
     default:
       printf("Header contains invalid information: %c\n", temp_char);
     }
-  }
-
-  printf("final_header: %lu\n", final_header);
-  
+  } 
   
   return final_header;
 }
@@ -83,8 +80,8 @@ uintptr_t read_formatstring(char* formatstring){
   }
   //printf("formatbinary: %"PRIuPTR"\n", formatbinary);
 
-  formatbinary = formatbinary << 2; /* Shift two steps left so we have room
-				       for the instruction bits */
+  formatbinary = formatbinary << 2; /* Shift two steps left so we have 
+				       room for the instruction bits */
   return formatbinary;
 }
 
@@ -94,50 +91,74 @@ char* translate_formatstring (char* formatstring) {
   int first_digit = -1;
   int final_size = 0;
 
-  for ( int i = 0; i < (length + 1); i++ ){
+  for ( int i = 1; i < (length + 1); i++ ){
     if ( isdigit( *temp_char ) ) {
 	if ( first_digit < 0 ){
 	  first_digit = i;
 	}
     }
     else {
-      if ( first_digit > 0 ) {
+      if ( first_digit >= 0 ) {
 	int int_size = ( i - first_digit );
 	char* digit = calloc(1,  sizeof(char) * ( int_size ) );
-	printf("Found number, size: %d\n", ( int_size ) );
 	
 	for ( int x = 0; x < int_size; x++ ) {
-	  printf("Loop %d in x for-loop\n", x);
 	  *(digit + ( sizeof(char) * x ) ) = *(formatstring +
 					       (sizeof(char) *
 						(i - (int_size - x) )
 						-1 ) );
 	  //Please don't read this code, it works.
 	}
+	
 	final_size += atoi(digit);
-	printf("Digits: %s\n", digit);
+	first_digit = -1;
       }
       else {
 	final_size += 1;
       }
     }
-    printf("%c\n", *temp_char);
     temp_char = formatstring + ( i * sizeof(char) );
   }
-
-  printf("Final_size: %d\n", final_size);
-
-  /*Create new char* with calloc (1, final_size). And transform above to
-   the acceptable format.*/
-
-  char* final_format = calloc(1, final_size);
   
-  for (int i = 0; i < ( length + 1 ); i++){
-    *( final_format + (sizeof(char) * i) ) = *( formatstring +
-						(sizeof(char) * i) );
+  char* final_format = calloc(1, final_size + 1);
+  int pos_in_final = 0;
+  
+  for (int i = 0; i < length; i++) {
+    if ( isdigit( *( formatstring + (sizeof(char) * i) ) ) ){
+	if ( first_digit < 0 ){
+	  first_digit = i;
+	}
+    }
+    else {
+       if ( first_digit >= 0 ) {
+	int int_size = ( i - first_digit );
+	char* digit = calloc(1,  sizeof(char) * ( int_size ) );
+	
+	for ( int x = 0; x < int_size; x++ ) {
+	  
+	  *(digit + ( sizeof(char) * x ) ) = *(formatstring +
+					       (sizeof(char) *
+						(i - (int_size - x) )
+						-0 ) );
+	  //Please don't read this code, it works.
+	}
+
+	int final_size = atoi(digit);
+	char next_char = *(formatstring + (sizeof(char) * i)  );
+	
+	for (int x = 0; x < final_size; x++){
+	  *(final_format + (sizeof(char) * pos_in_final++) ) = next_char;
+	}
+	
+	first_digit = -1;
+       }
+       else {
+	 *(final_format +
+	   (sizeof(char) * pos_in_final++) ) = *(formatstring +
+						 (sizeof(char) * i ) );
+       }
+    }
   }
-
-  
 
   return final_format;
 }
