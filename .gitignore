@@ -37,5 +37,5 @@ main
 
 # Emacs weird files
 *~
-#*#
-.#
+*/#*#
+*/.#*
