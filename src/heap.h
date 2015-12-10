@@ -1,8 +1,6 @@
 #ifndef HEAP_H_
 #define HEAP_H_
 
-typedef struct heap_side heap_side;
-
 typedef struct heap heap;
 
 heap* new_heap(int);

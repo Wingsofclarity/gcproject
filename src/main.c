@@ -6,7 +6,7 @@
 #include "heap.h"
 
 int main (int argc, char* argv[]){
-  heap* heap_test = new_heap(20);
+  /*heap* heap_test = new_heap(20);
   printf("sizeof(uintptr_t): %d\n", sizeof(uintptr_t));
   //printf("Size: %d\n", get_size(heap_test));
   char test[] = "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiicclliififd";
@@ -19,6 +19,12 @@ int main (int argc, char* argv[]){
 
   //printf("Size1: %d", heap_test->left_side->size);
   return 1;
+*/
+
+  char* teststring = "iii23*";
+  printf("%s\n", teststring);
+  teststring = translate_formatstring( teststring );
+  printf("HEJSAN %s\n", teststring);
   
   //int* test_int = (int*)malloc(sizeof(int));
   //*test_int = 99;
