@@ -12,7 +12,7 @@
 #define PTRSIZE sizeof(uintptr_t)
 
 struct heap_side {
-  int size;
+  int bytes;
   
   uintptr_t start;
   uintptr_t first_free;
@@ -24,22 +24,23 @@ typedef struct heap_side heap_side;
 struct heap {
   heap_side* left_side;
   heap_side* right_side;
-  int size;
+  int bytes;
   bool active_side; //true for left, false for right.
 };
 
-heap* new_heap(int size){
+heap* new_heap_old(int size){
   //The heap currently only works with ints, as the implemenation details
   //will mean the allocation is done differently.
-  heap* temp_heap = (heap*)malloc(sizeof(heap));;
-  temp_heap->size = size;
+  
+  heap* temp_heap = (heap*)malloc(sizeof(heap));
+  temp_heap->bytes = size;
   temp_heap->active_side = true;
 
   heap_side* leftside = (heap_side*)malloc(sizeof(heap_side));
   heap_side* rightside = (heap_side*)malloc(sizeof(heap_side));
   
-  leftside->size = size;
-  rightside->size = size;
+  leftside->bytes = size;
+  rightside->bytes = size;
 
   leftside->start = (uintptr_t)malloc( (INTSIZE + PTRSIZE) * size );
   rightside->start = (uintptr_t)malloc( (INTSIZE + PTRSIZE) * size);
@@ -56,8 +57,36 @@ heap* new_heap(int size){
   return temp_heap;
 }
 
+heap* new_heap(size_t bytes){
+  heap* temp_heap = (heap*)malloc(sizeof(heap));
+  // Is this neccesary?
+  temp_heap->bytes = bytes;
+  // Can't imagine where we'd use this information.
+
+  temp_heap->active_side = true;
+
+  heap_side* leftside = (heap_side*)malloc( bytes );
+  heap_side* rightside = (heap_side*)malloc ( bytes );
+
+  leftside->start = (uintptr_t)leftside;
+  rightside->start = (uintptr_t)rightside;
+
+  leftside->first_free = leftside->start;
+  rightside->first_free = rightside->start;
+  printf("leftside->start: %d\n", leftside->start);
+  
+  leftside->last_block = leftside->first_free + bytes;
+  rightside->last_block = rightside->first_free + bytes;
+  printf("Leftside->last_block: %d\n", leftside->last_block);
+  
+  temp_heap->left_side = leftside;
+  temp_heap->right_side = rightside;
+
+  return temp_heap;
+}
+
 int get_size(heap* heap){
-  return heap->size;
+  return heap->bytes;
 }
 
 uint32_t get_first(heap* heap){
@@ -71,10 +100,12 @@ bool write_to_side(heap_side* heapside, int value, char* formatstring){
   uintptr_t header = read_formatstring(formatstring);
 
   if ( header != 0 ) printf("Header: %"PRIuPTR"\n", header);
- 
+  
   int* first_free = (int*)heapside->first_free;
   if (heapside->first_free >= heapside->last_block ||
       heapside->first_free < heapside->start) { 
+    printf("heapsize: %d, %d, %d\n", heapside->first_free,
+	   heapside->last_block, heapside->start);
     return false;
   }
   *first_free = value;

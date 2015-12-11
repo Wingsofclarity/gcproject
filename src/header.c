@@ -59,7 +59,9 @@ uintptr_t set_header_size(char* formatstring){
     default:
       printf("Header contains invalid information: %c\n", temp_char);
     }
-  } 
+
+    //free(temp_char);
+  }
   
   return final_header;
 }
@@ -67,8 +69,8 @@ uintptr_t set_header_size(char* formatstring){
 uintptr_t read_formatstring(char* formatstring){
   size_t length = strlen( formatstring );
   uintptr_t formatbinary = 0;
-  if ( length > ( (PTRSIZE * 8) - 3)  ){ /*Formatstring is longer than allowed
-					in the bitvector */
+  if ( length > ( (PTRSIZE * 8) - 3)  ){ /*Formatstring is longer than 
+					   allowed in the bitvector */
     set_header_size( formatstring ); 
   }
   else {
@@ -100,7 +102,9 @@ char* translate_formatstring (char* formatstring) {
     else {
       if ( first_digit >= 0 ) {
 	int int_size = ( i - first_digit );
-	char* digit = calloc(1,  sizeof(char) * ( int_size ) );
+	char* digit = calloc(1,  sizeof(char) * ( int_size) );
+	/*I think we have a memory leak due to digit not being null
+	 terminated, but I'm not 100%.*/
 	
 	for ( int x = 0; x < int_size; x++ ) {
 	  *(digit + ( sizeof(char) * x ) ) = *(formatstring +
@@ -111,6 +115,7 @@ char* translate_formatstring (char* formatstring) {
 	}
 	
 	final_size += atoi(digit);
+	free(digit);
 	first_digit = -1;
       }
       else {
@@ -119,6 +124,7 @@ char* translate_formatstring (char* formatstring) {
     }
     temp_char = formatstring + ( i * sizeof(char) );
   }
+  //free(temp_char);
   
   char* final_format = calloc(1, final_size + 1);
   int pos_in_final = 0;
@@ -133,8 +139,10 @@ char* translate_formatstring (char* formatstring) {
        if ( first_digit >= 0 ) {
 	int int_size = ( i - first_digit );
 	char* digit = calloc(1,  sizeof(char) * ( int_size ) );
-	
-	for ( int x = 0; x < int_size; x++ ) {
+	/*I think we have a memory leak due to digit not being null
+	 terminated, but I'm not 100%.*/
+
+	for (int x = 0; x < int_size; x++ ) {
 	  
 	  *(digit + ( sizeof(char) * x ) ) = *(formatstring +
 					       (sizeof(char) *
@@ -142,15 +150,15 @@ char* translate_formatstring (char* formatstring) {
 						-0 ) );
 	  //Please don't read this code, it works.
 	}
-
 	int final_size = atoi(digit);
 	char next_char = *(formatstring + (sizeof(char) * i)  );
 	
-	for (int x = 0; x < final_size; x++){
+	for (int y = 0; y < final_size; y++){
 	  *(final_format + (sizeof(char) * pos_in_final++) ) = next_char;
 	}
-	
+	free(digit);
 	first_digit = -1;
+	
        }
        else {
 	 *(final_format +
@@ -160,5 +168,6 @@ char* translate_formatstring (char* formatstring) {
     }
   }
 
+  //This leaks memory like an open faucet.
   return final_format;
 }

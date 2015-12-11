@@ -3,7 +3,7 @@
 
 typedef struct heap heap;
 
-heap* new_heap(int);
+heap* new_heap(size_t);
 
 bool write_to_heap(heap*, int, char[]);
 
