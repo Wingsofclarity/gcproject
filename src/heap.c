@@ -74,6 +74,7 @@ heap* new_heap(size_t bytes){
   leftside->first_free = leftside->start;
   rightside->first_free = rightside->start;
   printf("leftside->start: %d\n", leftside->start);
+  printf("leftside->first_free: %d\n", leftside->first_free);
   
   leftside->last_block = leftside->first_free + bytes;
   rightside->last_block = rightside->first_free + bytes;
@@ -101,14 +102,14 @@ bool write_to_side(heap_side* heapside, int value, char* formatstring){
 
   if ( header != 0 ) printf("Header: %"PRIuPTR"\n", header);
   
-  int* first_free = (int*)heapside->first_free;
+  printf("heapside->first_free: %d\n", heapside->first_free);
   if (heapside->first_free >= heapside->last_block ||
       heapside->first_free < heapside->start) { 
     printf("heapsize: %d, %d, %d\n", heapside->first_free,
 	   heapside->last_block, heapside->start);
     return false;
   }
-  *first_free = value;
+  *((int*)heapside->first_free) = value;
   heapside->first_free = (heapside->first_free) + INTSIZE + PTRSIZE;
   return true;
 }
