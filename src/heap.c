@@ -44,7 +44,7 @@ heap* new_heap_old(int size){
 
   leftside->start = (uintptr_t)malloc( (INTSIZE + PTRSIZE) * size );
   rightside->start = (uintptr_t)malloc( (INTSIZE + PTRSIZE) * size);
-
+  
   leftside->last_block = (leftside->start + ( (INTSIZE + PTRSIZE)*size));
   rightside->last_block =(rightside->start + ((INTSIZE + PTRSIZE)*size));
 
@@ -71,8 +71,8 @@ heap* new_heap(size_t bytes){
   leftside->start = (uintptr_t)leftside;
   rightside->start = (uintptr_t)rightside;
 
-  leftside->first_free = leftside->start;
-  rightside->first_free = rightside->start;
+  leftside->first_free = (uintptr_t)leftside->start;
+  rightside->first_free = (uintptr_t)rightside->start;
   printf("leftside->start: %d\n", leftside->start);
   printf("leftside->first_free: %d\n", leftside->first_free);
   
@@ -82,7 +82,7 @@ heap* new_heap(size_t bytes){
   
   temp_heap->left_side = leftside;
   temp_heap->right_side = rightside;
-
+  printf("Temp-heap firstfree: %d\n", temp_heap->left_side->first_free);
   return temp_heap;
 }
 
@@ -94,23 +94,26 @@ uint32_t get_first(heap* heap){
   if (heap->active_side){
     return (heap->left_side->first_free);
   }
+  else return heap->right_side->first_free;
   return 0;
 }
 
 bool write_to_side(heap_side* heapside, int value, char* formatstring){
   uintptr_t header = read_formatstring(formatstring);
-
   if ( header != 0 ) printf("Header: %"PRIuPTR"\n", header);
   
-  printf("heapside->first_free: %d\n", heapside->first_free);
+  printf("%d\n", heapside->first_free);
   if (heapside->first_free >= heapside->last_block ||
       heapside->first_free < heapside->start) { 
     printf("heapsize: %d, %d, %d\n", heapside->first_free,
-	   heapside->last_block, heapside->start);
+	   heapside->start, heapside->last_block);
     return false;
   }
-  *((int*)heapside->first_free) = value;
-  heapside->first_free = (heapside->first_free) + INTSIZE + PTRSIZE;
+  *( (int*)heapside->first_free ) = value;
+  //This is the line that creates the bug.
+  
+  printf("%d written in to %d\n", value, heapside->first_free);
+  heapside->first_free =(uintptr_t) (heapside->first_free) + 8;
   return true;
 }
 

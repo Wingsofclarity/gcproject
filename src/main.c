@@ -8,11 +8,10 @@
 
 int main (int argc, char* argv[]){
   heap* heap_test = new_heap(sizeof(int) * 20);
-  printf("sizeof(int): %d\n", sizeof(int));
   //printf("Size: %d\n", get_size(heap_test));
   char* test = "i";
-  for (int i = 0; i < 25; i++) {
-    if (!write_to_heap(heap_test, (59)-i, test) ) {
+  for (int i = 0; i < 5; i++) {
+    if (!write_to_heap(heap_test, (10)-i, test) ) {
       printf("%d: Heap is full!\n", i);
     }
   }
