@@ -4,12 +4,13 @@
 
 #include "header.h"
 
-#define TESTLENGTH 10;
+#define TESTLENGTH 10
 
 int main (int argc, char* argv[]){
-  char* test = "i";
+  char* test = "i*";
   
   for (int i = 0; i < TESTLENGTH; i++) {
-    test = 
+    *(test) = i + '0';
+    printf("%d\n", read_formatstring(test));
   }
 }
