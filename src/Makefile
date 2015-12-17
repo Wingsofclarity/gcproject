@@ -32,5 +32,5 @@ clean-win:
 	-del *.o
 	-del $(TARGET)
 
-123:
-	@ $(CC) $(CFLAGS) heap_2.c heap_2_test.c -o heaptest
+hyp:
+	@ $(CC) $(CFLAGS) heap.c heap_test.c -o heaptest
