@@ -1,5 +1,5 @@
-#ifndef HEAP_H_
-#define HEAP_H_
+#ifndef HEAP_OLD_H_
+#define HEAP_OLD_H_
 
 typedef struct heap heap;
 
