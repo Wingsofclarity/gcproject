@@ -4,7 +4,7 @@
 //#include "Basic.h"
 
 int main(){
-  heap *h = new_heap();
+  heap *h = new_heap(32);
   heap_alloc_int(h,321);
 
   

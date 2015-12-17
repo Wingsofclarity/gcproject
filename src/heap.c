@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "heap.h"
 #include <stdbool.h>
+#include "header.h"
 
 typedef struct heap_side_t heap_side;
 typedef struct heap_t heap;
@@ -22,8 +23,8 @@ heap_side *new_heap_side();
 
 heap *new_heap(int size){
   heap *h = (heap*) malloc(sizeof(heap));
-  h->a=new_heap_side(size);
-  h->b=new_heap_side(size);
+  h->a=new_heap_side(size/2);
+  h->b=new_heap_side(size/2);
   return h;
 }
 
@@ -35,37 +36,30 @@ heap_side *new_heap_side(int size){
   return hs;
 }
 
-void heap_alloc_format(heap* h, char *formatstring){
-  int size = 0;
-  
-  for (int i = 0; formatstring[i]!='\0'; i++){
-    size += heap_char_to_size(formatstring[i]);
+uintptr_t heap_alloc_format(heap* h, char *formatstring){
+  uintptr_t a = read_formatstring(formatstring);
+  size_t size = size_of_object(a);
+  heap_side* hs = heap_active_side(h);
+  if (!isSpace(hs,size)){
+    //Error
   }
-  
-  heap_alloc_int(h, size);
+  uintptr_t r = hs->free;
+  hs->free = hs->free+size;
+  return r;
 }
 
-void heap_alloc_int(heap* h, int a){
 
+
+unintptr_t heap_alloc_int(heap* h, int a){
+  heap_active_side(h)->
 }
 
-int heap_char_to_size(char a){
-  switch (a){
-    
-  case '*':
-    return 3;
-    break;
-
-  case 'i':
-    return sizeof(int);
-    break;
-    
-  default:
-    return 2;
-	  
-  }
+heap_side* heap_active_side(heap* h){
+  if (h->active) return h->a;
+  else return h->b;
 }
 
-bool isSpace(int a){
-  return true;
+bool isSpace(heap_side *hs, int a){
+  if (hs->free+size>=hs->end) return false;
+  else if (hs->free<hs->end) return true;
 }
