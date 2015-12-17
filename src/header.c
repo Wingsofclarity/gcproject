@@ -174,5 +174,6 @@ char* translate_formatstring (char* formatstring) {
   }
 
   //This leaks memory.
+  printf("Final_format: %d\n", final_format);
   return final_format;
 }

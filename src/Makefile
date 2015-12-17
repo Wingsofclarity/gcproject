@@ -1,4 +1,4 @@
-TARGET = main
+TARGET = headertest
 LIBS = -lm
 CC = gcc
 CFLAGS = -ggdb -Wall -Werror -std=c11
