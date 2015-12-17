@@ -28,7 +28,7 @@ struct heap {
   bool active_side; //true for left, false for right.
 };
 
-heap* new_heap_old(int size){
+/*heap* new_heap_old(int size){
   //The heap currently only works with ints, as the implemenation details
   //will mean the allocation is done differently.
   
@@ -55,7 +55,7 @@ heap* new_heap_old(int size){
   temp_heap->right_side = rightside;
   
   return temp_heap;
-}
+  }*/
 
 heap* new_heap(size_t bytes){
   heap* temp_heap = (heap*)malloc(sizeof(heap));
@@ -65,11 +65,11 @@ heap* new_heap(size_t bytes){
 
   temp_heap->active_side = true;
 
-  heap_side* leftside = (heap_side*)malloc( bytes );
-  heap_side* rightside = (heap_side*)malloc ( bytes );
+  heap_side* leftside = (heap_side*)malloc( sizeof(heap_side) );
+  heap_side* rightside = (heap_side*)malloc ( sizeof(heap_side) );
 
-  leftside->start = (uintptr_t)leftside;
-  rightside->start = (uintptr_t)rightside;
+  leftside->start = (uintptr_t)malloc( bytes );
+  rightside->start = (uintptr_t)malloc( bytes );
 
   leftside->first_free = (uintptr_t)leftside->start;
   rightside->first_free = (uintptr_t)rightside->start;
@@ -102,18 +102,16 @@ bool write_to_side(heap_side* heapside, int value, char* formatstring){
   uintptr_t header = read_formatstring(formatstring);
   if ( header != 0 ) printf("Header: %"PRIuPTR"\n", header);
   
-  printf("%d\n", heapside->first_free);
   if (heapside->first_free >= heapside->last_block ||
       heapside->first_free < heapside->start) { 
-    printf("heapsize: %d, %d, %d\n", heapside->first_free,
-	   heapside->start, heapside->last_block);
     return false;
   }
-  *( (int*)heapside->first_free ) = value;
-  //This is the line that creates the bug.
+  *( (int*)(heapside->first_free) ) = header;
+  heapside->first_free += (uintptr_t)sizeof(uintptr_t);
   
-  printf("%d written in to %d\n", value, heapside->first_free);
-  heapside->first_free =(uintptr_t) (heapside->first_free) + 8;
+  *( (int*) (heapside->first_free) ) = (int)value;
+  heapside->first_free = (uintptr_t)(heapside->first_free +
+				     (uintptr_t)INTSIZE);
   return true;
 }
 
@@ -149,18 +147,15 @@ bool change_side(heap* heap){
 void print_heap(heap* heap){ /*Mainly a test function, 
 			       will never be used outside tests*/
   if (heap->active_side){
-    uintptr_t start = heap->left_side->start;
-    uintptr_t end = heap->left_side->first_free;
-
-    
+    uintptr_t start = heap->left_side->start+4;
+    uintptr_t end = heap->left_side->first_free;   
     
     int i = 0;
     printf("\n%"PRIuPTR" sizeof(int). %"PRIuPTR" sizeof(uintptr_t)\n", INTSIZE,
 	   PTRSIZE);
-    for (; start < end; start = start + INTSIZE + PTRSIZE) {
+    for (; start < end; start = start + 8) {
       printf("\n%d: %d", i++, *((int*)start));
     }
     printf("\nPrinted %d objects\n\n", i);
   }
 }
-

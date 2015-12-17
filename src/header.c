@@ -168,6 +168,6 @@ char* translate_formatstring (char* formatstring) {
     }
   }
 
-  //This leaks memory like an open faucet.
+  //This leaks memory.
   return final_format;
 }
