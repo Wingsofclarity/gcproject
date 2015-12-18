@@ -5,7 +5,7 @@
 
 int main(){
   heap *h = new_heap(32);
-  heap_alloc_int(h,321);
+  heap_alloc_format(h,"isdfj");
 
   
   puts("Test completed.");

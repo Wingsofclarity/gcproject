@@ -33,4 +33,4 @@ clean-win:
 	-del $(TARGET)
 
 hyp:
-	@ $(CC) $(CFLAGS) heap.c heap_test.c -o heaptest
+	@ $(CC) $(CFLAGS) heap.c header.c heap_test.c -o heaptest

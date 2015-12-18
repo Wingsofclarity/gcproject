@@ -18,8 +18,10 @@ struct heap_t{
   bool active;
 };
 
-int heap_char_to_size(char);
-heap_side *new_heap_side();
+bool has_space(heap_side*, int);
+heap_side *new_heap_side(int);
+heap_side *heap_active_side(heap *);
+void heap_switch(heap *);
 
 heap *new_heap(int size){
   heap *h = (heap*) malloc(sizeof(heap));
@@ -40,26 +42,28 @@ uintptr_t heap_alloc_format(heap* h, char *formatstring){
   uintptr_t a = read_formatstring(formatstring);
   size_t size = size_of_object(a);
   heap_side* hs = heap_active_side(h);
-  if (!isSpace(hs,size)){
-    //Error
+  if (!has_space(hs,size)){
+    heap_switch(h);
+    hs = heap_active_side(h);
+    
+    if(!has_space(hs,size)){
+      //Error
+    }
   }
   uintptr_t r = hs->free;
   hs->free = hs->free+size;
   return r;
 }
 
-
-
-unintptr_t heap_alloc_int(heap* h, int a){
-  heap_active_side(h)->
+void heap_switch(heap *h){
+  h->active = !h->active;
 }
 
-heap_side* heap_active_side(heap* h){
+heap_side *heap_active_side(heap *h){
   if (h->active) return h->a;
   else return h->b;
 }
 
-bool isSpace(heap_side *hs, int a){
-  if (hs->free+size>=hs->end) return false;
-  else if (hs->free<hs->end) return true;
+bool has_space(heap_side* hs, int size){
+  return (hs->free+size>=hs->end);
 }

@@ -69,9 +69,10 @@ uintptr_t set_header_size(char* formatstring){
 uintptr_t read_formatstring(char* formatstring){
   size_t length = strlen( formatstring );
   uintptr_t formatbinary = 0;
+
   if ( length > ( (PTRSIZE * 8) - 3)  ){ /*Formatstring is longer than 
 					   allowed in the bitvector */
-    set_header_size( formatstring ); 
+    formatbinary = set_header_size( formatstring ); 
   }
   else {
     for (int i = (length - 1); i >= 0; i--) {
@@ -85,6 +86,10 @@ uintptr_t read_formatstring(char* formatstring){
   formatbinary = formatbinary << 2; /* Shift two steps left so we have 
 				       room for the instruction bits */
   return formatbinary;
+}
+
+size_t size_of_object(uintptr_t header) {
+  return (size_t)2;
 }
 
 char* translate_formatstring (char* formatstring) {
@@ -168,6 +173,6 @@ char* translate_formatstring (char* formatstring) {
     }
   }
 
-  //This leaks memory like an open faucet.
+  //This leaks memory.
   return final_format;
 }
