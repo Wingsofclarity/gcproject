@@ -20,7 +20,10 @@ uintptr_t getStartPoint() {
 }
 
 // What we're here for
+
 void stackTrace(void stackFunc(void*)){
+  /*  Gives compiling error, please fix:
+    stack.c:28: Undefined reference to 'environ'
 	DumpRegisters();
 	void *current;
 	uintptr_t end; 
@@ -33,9 +36,8 @@ void stackTrace(void stackFunc(void*)){
 		current = (void*)(tracker);
 		stackFunc(current);
 		tracker = tracker + iterator;
-	}
+	}*/
 }
-
 // Testing stuff
 void stackTester(void* maybePointer){
 	runs++;
@@ -43,7 +45,7 @@ void stackTester(void* maybePointer){
 }
 
 // Testing stuff
-int main (int argc, char *argv[]){
+void test_stack (void){
 	stackTrace(stackTester);
 	printf("%"PRIuPTR"\n", comb);
 	printf("%"PRIuPTR"\n", runs);

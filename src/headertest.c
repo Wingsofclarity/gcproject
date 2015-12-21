@@ -8,10 +8,3 @@
 
 
 #include "header.h"
-
-#define TESTLENGTH 10
-
-void test_formatstring (void){
-  
-  
-}

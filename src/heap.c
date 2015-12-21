@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdint.h>
 #include "heap.h"
 #include <stdbool.h>
 #include "header.h"

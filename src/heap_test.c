@@ -3,13 +3,12 @@
 #include <assert.h>
 //#include "Basic.h"
 
-int main(){
+void test_heap(){
   heap *h = new_heap(32);
   heap_alloc_format(h,"isdfj");
 
   
   puts("Test completed.");
-  return 0;
 }
 
 void test_maxi(void)
