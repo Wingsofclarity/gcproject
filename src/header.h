@@ -7,6 +7,6 @@ uintptr_t read_formatstring(char[]);
 
 char* translate_formatstring(char*);
 
-int int_pow (int, int);
+size_t size_of_object(uintptr_t);
 
 #endif //HEADER_H_

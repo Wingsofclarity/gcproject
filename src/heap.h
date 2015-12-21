@@ -1,12 +1,12 @@
-#ifndef HEAP_H_
-#define HEAP_H_
+#include <stdlib.h>
 
-typedef struct heap heap;
+#ifndef HEAP_H
+#define HEAP_H
 
-heap* new_heap(size_t);
 
-bool write_to_heap(heap*, int, char[]);
+typedef struct heap_t heap;
+heap *new_heap();
 
-void print_heap(heap*);
+uintptr_t heap_alloc_format(heap*, char *);
 
-#endif //HEAP_H_
+#endif

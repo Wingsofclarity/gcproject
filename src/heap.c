@@ -1,161 +1,69 @@
-#include <stdbool.h> //For true .
-#include <stdlib.h> 
-#include <stdio.h> //For error checking
-#include <string.h>
-#include <stdint.h>
-#include <inttypes.h>
-#include <math.h> //For squareing in bit operations
-#include "header.h"
+#include <stdlib.h>
 #include "heap.h"
+#include <stdbool.h>
+#include "header.h"
 
-#define INTSIZE sizeof(int)
-#define PTRSIZE sizeof(uintptr_t)
+typedef struct heap_side_t heap_side;
+typedef struct heap_t heap;
 
-struct heap_side {
-  int bytes;
-  
+struct heap_side_t{
   uintptr_t start;
-  uintptr_t first_free;
-  uintptr_t last_block;
+  uintptr_t free;
+  uintptr_t end;
 };
 
-typedef struct heap_side heap_side;
-
-struct heap {
-  heap_side* left_side;
-  heap_side* right_side;
-  int bytes;
-  bool active_side; //true for left, false for right.
+struct heap_t{
+  heap_side* a;
+  heap_side* b;
+  bool active;
 };
 
-/*heap* new_heap_old(int size){
-  //The heap currently only works with ints, as the implemenation details
-  //will mean the allocation is done differently.
-  
-  heap* temp_heap = (heap*)malloc(sizeof(heap));
-  temp_heap->bytes = size;
-  temp_heap->active_side = true;
+bool has_space(heap_side*, int);
+heap_side *new_heap_side(int);
+heap_side *heap_active_side(heap *);
+void heap_switch(heap *);
 
-  heap_side* leftside = (heap_side*)malloc(sizeof(heap_side));
-  heap_side* rightside = (heap_side*)malloc(sizeof(heap_side));
-  
-  leftside->bytes = size;
-  rightside->bytes = size;
-
-  leftside->start = (uintptr_t)malloc( (INTSIZE + PTRSIZE) * size );
-  rightside->start = (uintptr_t)malloc( (INTSIZE + PTRSIZE) * size);
-  
-  leftside->last_block = (leftside->start + ( (INTSIZE + PTRSIZE)*size));
-  rightside->last_block =(rightside->start + ((INTSIZE + PTRSIZE)*size));
-
-  leftside->first_free = leftside->start;
-  rightside->first_free = rightside->start;
-
-  temp_heap->left_side = leftside;
-  temp_heap->right_side = rightside;
-  
-  return temp_heap;
-  }*/
-
-heap* new_heap(size_t bytes){
-  heap* temp_heap = (heap*)malloc(sizeof(heap));
-  // Is this neccesary?
-  temp_heap->bytes = bytes;
-  // Can't imagine where we'd use this information.
-
-  temp_heap->active_side = true;
-
-  heap_side* leftside = (heap_side*)malloc( sizeof(heap_side) );
-  heap_side* rightside = (heap_side*)malloc ( sizeof(heap_side) );
-
-  leftside->start = (uintptr_t)malloc( bytes );
-  rightside->start = (uintptr_t)malloc( bytes );
-
-  leftside->first_free = (uintptr_t)leftside->start;
-  rightside->first_free = (uintptr_t)rightside->start;
-  printf("leftside->start: %d\n", leftside->start);
-  printf("leftside->first_free: %d\n", leftside->first_free);
-  
-  leftside->last_block = leftside->first_free + bytes;
-  rightside->last_block = rightside->first_free + bytes;
-  printf("Leftside->last_block: %d\n", leftside->last_block);
-  
-  temp_heap->left_side = leftside;
-  temp_heap->right_side = rightside;
-  printf("Temp-heap firstfree: %d\n", temp_heap->left_side->first_free);
-  return temp_heap;
+heap *new_heap(int size){
+  heap *h = (heap*) malloc(sizeof(heap));
+  h->a=new_heap_side(size/2);
+  h->b=new_heap_side(size/2);
+  return h;
 }
 
-int get_size(heap* heap){
-  return heap->bytes;
+heap_side *new_heap_side(int size){
+  heap_side* hs = malloc(sizeof(heap_side)+size);
+  hs->start = (uintptr_t) (hs+sizeof(heap_side));
+  hs->free = hs->start;
+  hs->end = (uintptr_t) (hs+sizeof(heap_side)+size);
+  return hs;
 }
 
-uint32_t get_first(heap* heap){
-  if (heap->active_side){
-    return (heap->left_side->first_free);
-  }
-  else return heap->right_side->first_free;
-  return 0;
-}
-
-bool write_to_side(heap_side* heapside, int value, char* formatstring){
-  uintptr_t header = read_formatstring(formatstring);
-  if ( header != 0 ) printf("Header: %"PRIuPTR"\n", header);
-  
-  if (heapside->first_free >= heapside->last_block ||
-      heapside->first_free < heapside->start) { 
-    return false;
-  }
-  *( (int*)(heapside->first_free) ) = header;
-  heapside->first_free += (uintptr_t)sizeof(uintptr_t);
-  
-  *( (int*) (heapside->first_free) ) = (int)value;
-  heapside->first_free = (uintptr_t)(heapside->first_free +
-				     (uintptr_t)INTSIZE);
-  return true;
-}
-
-bool write_to_heap(heap* heap, int value, char* formatstring){
-  if (heap->active_side){
-    return write_to_side(heap->left_side, value, formatstring);
-  }
-  else {
-    return write_to_side(heap->right_side, value, formatstring);
-  }
-  return false;
-} 
-
-bool change_to_right(heap* head){
-  head->active_side = false;
-  head->left_side->first_free = head->left_side->start;
-  return true;
-}
-
-bool change_to_left(heap* head){
-  head->active_side = true;
-  head->right_side->first_free = head->right_side->start;
-  return true;
-}
-
-bool change_side(heap* heap){
-  if (heap->active_side){ //left is active
-    return change_to_right(heap);
-  }
-  else return change_to_left(heap);
-}
-
-void print_heap(heap* heap){ /*Mainly a test function, 
-			       will never be used outside tests*/
-  if (heap->active_side){
-    uintptr_t start = heap->left_side->start+4;
-    uintptr_t end = heap->left_side->first_free;   
+uintptr_t heap_alloc_format(heap* h, char *formatstring){
+  uintptr_t a = read_formatstring(formatstring);
+  size_t size = size_of_object(a);
+  heap_side* hs = heap_active_side(h);
+  if (!has_space(hs,size)){
+    heap_switch(h);
+    hs = heap_active_side(h);
     
-    int i = 0;
-    printf("\n%"PRIuPTR" sizeof(int). %"PRIuPTR" sizeof(uintptr_t)\n", INTSIZE,
-	   PTRSIZE);
-    for (; start < end; start = start + 8) {
-      printf("\n%d: %d", i++, *((int*)start));
+    if(!has_space(hs,size)){
+      //Error
     }
-    printf("\nPrinted %d objects\n\n", i);
   }
+  uintptr_t r = hs->free;
+  hs->free = hs->free+size;
+  return r;
+}
+
+void heap_switch(heap *h){
+  h->active = !h->active;
+}
+
+heap_side *heap_active_side(heap *h){
+  if (h->active) return h->a;
+  else return h->b;
+}
+
+bool has_space(heap_side* hs, int size){
+  return (hs->free+size>=hs->end);
 }

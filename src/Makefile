@@ -33,3 +33,11 @@ clean-win:
 	-del $(TARGET)
 	-del *.d
 	-del *.h~
+
+hyp:
+	@ $(CC) $(CFLAGS) heap.c header.c heap_test.c -o heaptest
+
+stackTest:
+	@ $(CC) $(CFLAGS) stack.c stack.h -o stackTest
+	./stackTest 1
+	./stackTest 1 2
