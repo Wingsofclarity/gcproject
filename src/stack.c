@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <setjmp.h>
 #include "stack.h"
+#include <inttypes.h>
 
 #define DumpRegisters() jmp_buf env; if (setjmp(env)) abort();
 
@@ -44,6 +45,6 @@ void stackTester(void* maybePointer){
 // Testing stuff
 int main (int argc, char *argv[]){
 	stackTrace(stackTester);
-	printf("%lu\n", comb);
-	printf("%lu\n", runs);
+	printf("%"PRIuPTR"\n", comb);
+	printf("%"PRIuPTR"\n", runs);
 }
