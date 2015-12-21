@@ -1,7 +1,7 @@
-TARGET = headertest
+TARGET = main
 LIBS = -lm
 CC = gcc
-CFLAGS = -ggdb -Wall -Werror -std=c11
+CFLAGS = -ggdb -Wall -Werror -std=c11 
 
 default: $(TARGET) run
 all: default
@@ -31,3 +31,5 @@ clean:
 clean-win:
 	-del *.o
 	-del $(TARGET)
+	-del *.d
+	-del *.h~
