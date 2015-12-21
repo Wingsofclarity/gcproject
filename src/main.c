@@ -6,7 +6,7 @@
 #include "header.h"
 #include "heap.h"
 
-/*int main (int argc, char* argv[]){
+int main (int argc, char* argv[]){
   heap* heap_test = new_heap(sizeof(int) * 20);
   //printf("Size: %d\n", get_size(heap_test));
   char* test = "i";
@@ -29,9 +29,8 @@
   free(teststring1);
   
   //int* test_int = (int*)malloc(sizeof(int));
-  *test_int = 99;
+  //*test_int = 99;
   //void* first_free = (void*)get_first(heap_test);
   //memcpy(first_free, test_int, sizeof(int));
   //printf("\nInt is: %d", *((int*)first_free));
 }
-*/

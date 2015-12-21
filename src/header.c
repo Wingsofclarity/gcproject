@@ -62,6 +62,8 @@ uintptr_t set_header_size(char* formatstring){
 
     //free(temp_char);
   }
+
+  final_header = final_header << 2;
   
   return final_header;
 }
