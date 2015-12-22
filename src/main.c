@@ -5,10 +5,8 @@
 
 #include "CUnit/Basic.h"
 
-#include "header.h"
 #include "heap.h"
-#include "headertest.c"
 
-int main (int argc, char* argv[]){
+/*int main (int argc, char* argv[]){
   
-}
+  }*/

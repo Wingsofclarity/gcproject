@@ -1,7 +1,7 @@
 TARGET = main
 LIBS = -lm
 CC = gcc
-CFLAGS = -ggdb -Wall -Werror -std=c11 
+CFLAGS = -ggdb -Wall -Werror -std=c11 -lcunit
 
 default: $(TARGET) run
 all: default

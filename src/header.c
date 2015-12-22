@@ -21,46 +21,45 @@ int int_pow (int base, int exponent){ //Used for bitwise manipulations.
   return result;
 }
 
+size_t char_to_size(char temp_char){
+
+  switch (temp_char) {
+    case 'L':
+    case 'l':
+      return sizeof(long);
+      break;
+    case 'I':
+    case 'i':
+      return sizeof(int);
+      break;
+    case 'D':
+    case 'd':
+      return sizeof(double);
+      break;
+    case 'F':
+    case 'f':
+      return sizeof(float);
+      break;
+    case 'C':
+    case 'c':
+      return sizeof(char);
+      break;
+    default:
+      printf("Header contains invalid information: %c\n", temp_char);
+      return 0;
+  }
+  return 0;
+}
+
 uintptr_t set_header_size(char* formatstring){
   uintptr_t final_header = 0;
 
   size_t length = strlen(formatstring);
-
-  size_t long_size = sizeof(long);
-  size_t int_size = sizeof(int);
-  size_t double_size = sizeof(double);
-  size_t float_size = sizeof(float);
-  size_t char_size = sizeof(char);
   
   for (int i = 0; i < length; i++) {
     char temp_char = *( formatstring + ( sizeof(char) * i ) );
 
-    switch (temp_char) {
-    case 'L':
-    case 'l':
-      final_header += long_size;
-      break;
-    case 'I':
-    case 'i':
-      final_header += int_size;
-      break;
-    case 'D':
-    case 'd':
-      final_header += double_size;
-      break;
-    case 'F':
-    case 'f':
-      final_header += float_size;
-      break;
-    case 'C':
-    case 'c':
-      final_header += char_size;
-      break;
-    default:
-      printf("Header contains invalid information: %c\n", temp_char);
-    }
-
-    //free(temp_char);
+    final_header += char_to_size(temp_char);
   }
 
   final_header = final_header << 2;
@@ -84,7 +83,11 @@ uintptr_t read_formatstring(char* formatstring){
     }
   }
   //printf("formatbinary: %"PRIuPTR"\n", formatbinary);
-
+  /*
+    Formatbinary flips the formatstring, so that the first character
+    is the least significant bit in the formatstring. 
+   */
+  
   formatbinary = formatbinary << 2; /* Shift two steps left so we have 
 				       room for the instruction bits */
   return formatbinary;
@@ -92,6 +95,28 @@ uintptr_t read_formatstring(char* formatstring){
 
 size_t size_of_object(uintptr_t header) {
   return (size_t)2;
+}
+
+size_t size_of_formatstring(char* formatstring){
+  size_t length = strlen( formatstring );
+  char tempchar = '\0';
+  size_t result = 0;
+  
+  for (int i = 0; i < length; i++){
+    tempchar = formatstring[i];
+    if (tempchar != '\0') {
+      size_t tempsize = char_to_size(tempchar);
+      if (tempsize != 0) {
+	result += tempsize;
+      }
+      else {
+	printf("CRITICAL ERROR, invalid formatstring");
+	return 0;
+      }
+    }
+  }
+  
+  return result;
 }
 
 char* translate_formatstring (char* formatstring) {
