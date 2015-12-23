@@ -68,6 +68,7 @@ uintptr_t set_header_size(char* formatstring){
 }
 
 uintptr_t read_formatstring(char* formatstring){
+  formatstring = translate_formatstring(formatstring);
   size_t length = strlen( formatstring );
   uintptr_t formatbinary = 0;
 
@@ -94,12 +95,21 @@ uintptr_t read_formatstring(char* formatstring){
 }
 
 uintptr_t new_header (char* formatstring) {
-  //Just building this to make test work.
-  uintptr_t final_header = (uintptr_t)calloc(1, (strlen(formatstring)
-						 * sizeof(double)));
-  final_header = (uintptr_t)formatstring;
-  printf("final_header: %d\n", final_header);
-  return final_header;
+
+  char* newFormat = translate_formatstring(formatstring);
+  size_t header_size = size_of_formatstring(newFormat);
+  
+  if (header_size > 28){
+    /*Need to return both a formatstring and a header.
+      what to do?
+      
+      Make sure returned uintptr_t ends in 00.
+    */
+    
+  }
+  else {
+    
+  }
 }
 
 size_t size_of_object(uintptr_t header) {
@@ -110,7 +120,7 @@ size_t size_of_object(uintptr_t header) {
     
   }
   else if ((header % 4) == 1) {
-    printf("\nHeader % 4 == 1\n");
+    //printf("\nHeader % 4 == 1\n");
     return (size_t)0;
     // Not sure how to represent "This has been moved"
   }
@@ -142,7 +152,7 @@ size_t size_of_formatstring(char* formatstring){
     }
   }
 
-  printf("formatstring: %s is size: %d", formatstring, result);
+  //printf("formatstring: %s is size: %d", formatstring, result);
   
   return result;
 }
