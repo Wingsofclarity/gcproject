@@ -9,6 +9,4 @@ char* translate_formatstring(char*);
 
 size_t size_of_object(uintptr_t);
 
-int int_pow(int, int);
-
 #endif //HEADER_H_
