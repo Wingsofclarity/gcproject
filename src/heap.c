@@ -42,7 +42,7 @@ void* heap_alloc_format(heap* h, char *formatstring){
   heap_side* hs = heap_active_side(h);
 
   // TODO: Detta ger fel nÃ¤r man vill traversera heapen /Peter
-  // Vad för fel, får gärna beskriva mer än bara "fel"...
+  // Vad för fel, får gärna beskriva mer än bara "fel".
   /* 
     if (!has_space(hs,size)){
     heap_switch(h);

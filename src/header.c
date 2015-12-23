@@ -93,6 +93,15 @@ uintptr_t read_formatstring(char* formatstring){
   return formatbinary;
 }
 
+uintptr_t new_header (char* formatstring) {
+  //Just building this to make test work.
+  uintptr_t final_header = (uintptr_t)calloc(1, (strlen(formatstring)
+						 * sizeof(double)));
+  final_header = (uintptr_t)formatstring;
+  printf("final_header: %d\n", final_header);
+  return final_header;
+}
+
 size_t size_of_object(uintptr_t header) {
   if ((header % 4) == 3) {
     
@@ -101,6 +110,7 @@ size_t size_of_object(uintptr_t header) {
     
   }
   else if ((header % 4) == 1) {
+    printf("\nHeader % 4 == 1\n");
     return (size_t)0;
     // Not sure how to represent "This has been moved"
   }
@@ -109,7 +119,8 @@ size_t size_of_object(uintptr_t header) {
     size_t final_size = size_of_formatstring(formatstring);
     return final_size;
   }
-  return (size_t)2;
+
+  return (size_t)0;
 }
 
 size_t size_of_formatstring(char* formatstring){
@@ -130,6 +141,8 @@ size_t size_of_formatstring(char* formatstring){
       }
     }
   }
+
+  printf("formatstring: %s is size: %d", formatstring, result);
   
   return result;
 }

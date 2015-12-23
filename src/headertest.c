@@ -99,6 +99,35 @@ void test_translate_formatstring(void) {
   CU_ASSERT_EQUAL(*result3, *desiredResult3);
 }
 
+void test_size_of_object(void){
+  //test for ( (header % 4) == 0 )
+  //pointer to formatstring
+  char* formatstring4 = "dddd";
+  uintptr_t header4 = (uintptr_t)malloc(sizeof(uintptr_t));
+  header4 = new_header(formatstring4);
+  printf("\n&formatstring4: %p\n", &formatstring4);
+  printf("header4: %d\n", header4);
+  size_t result4 = size_of_object(header4);
+  size_t expectedResult4 = 4*sizeof(double);
+  printf("Result4: %d, expectedResult4: %d", result4, expectedResult4);
+  CU_ASSERT_EQUAL(result4, expectedResult4);
+  printf("\n\n test 2\n\n");
+  //test for ( (header % 4) == 1 )
+  //Object has been moved.
+  char* formatstring3 = "ddd";
+  uintptr_t header3 = new_header(formatstring3);
+  printf("%d\n", header3);
+  header3 += 0;
+  size_t result3 = size_of_object(header3);
+  size_t expectedResult3 = 0;
+  CU_ASSERT_EQUAL(result3, expectedResult3);
+  free(formatstring3);
+
+  //test for ( (header % 4) == 2 )
+
+  //test for ( (header % 4) == 3 )
+}
+
 /************* Test Runner Code goes here **************/
 
 int main ( void )
@@ -125,7 +154,9 @@ int main ( void )
 	(NULL == CU_add_test(pSuite, "test_size_of_formatstring",
 			     test_size_of_formatstring)) ||
 	(NULL == CU_add_test(pSuite, "test_translate_formatstring",
-			     test_translate_formatstring))
+			     test_translate_formatstring)) ||
+	(NULL == CU_add_test(pSuite, "test_size_of_object",
+			     test_size_of_object))
 	) {
       CU_cleanup_registry();
       return CU_get_error();
