@@ -52,9 +52,9 @@ void test_set_header_size(void) {
   CU_ASSERT_EQUAL(resultC, desiredResultC);
   free(testC);
 
-  char* testR = "ffiicdddddfififififfffffffffff";
+  char* testR = "ffiicdddddfififififfffffffffffffffffffffffffff";
   uintptr_t resultR = set_header_size(testR);
-  uintptr_t desiredResultR = (18*sizeof(float) + 6*sizeof(int) +
+  uintptr_t desiredResultR = (34*sizeof(float) + 6*sizeof(int) +
 			      1*sizeof(char) + 5*sizeof(double)) << 2;
   CU_ASSERT_EQUAL(resultR, desiredResultR);
   free(testR);
@@ -66,10 +66,37 @@ void test_read_formatstring(void) {
   uintptr_t result1 = read_formatstring(test1);
   uintptr_t desiredResult1 = (7) << 2;
   CU_ASSERT_EQUAL(result1, desiredResult1);
+
+  
 }
 
-void max_test_3(void) {
+void test_size_of_formatstring(void) {
+  char* testC = "ccc";
+  size_t resultC = size_of_formatstring(testC);
+  size_t desiredResultC = 3*sizeof(char);
+  CU_ASSERT_EQUAL(resultC, desiredResultC);
 
+  char* testI = "ii";
+  size_t resultI = size_of_formatstring(testI);
+  size_t desiredResultI = 2*sizeof(int);
+  CU_ASSERT_EQUAL(resultI, desiredResultI);
+}
+
+void test_translate_formatstring(void) {
+  char* test1 = "3*2i2d";
+  char* result1 = translate_formatstring(test1);
+  char* desiredResult1 = "***iidd";
+  CU_ASSERT_EQUAL(*result1, *desiredResult1);
+
+  char* test2 = "32c";
+  char* result2 = translate_formatstring(test2);
+  char* desiredResult2 = "cccccccccccccccccccccccccccccccc";
+  CU_ASSERT_EQUAL(*result2, *desiredResult2);
+
+  char* test3 = "32";
+  char* result3 = translate_formatstring(test3);
+  char* desiredResult3 = "";
+  CU_ASSERT_EQUAL(*result3, *desiredResult3);
 }
 
 /************* Test Runner Code goes here **************/
@@ -91,11 +118,15 @@ int main ( void )
 
    /* add the tests to the suite */
    if ( (NULL == CU_add_test(pSuite, "test_int_pow", test_int_pow) ) ||
-        (NULL == CU_add_test(pSuite, "test_set_header_size"
-			     , test_set_header_size) ) ||
+        (NULL == CU_add_test(pSuite, "test_set_header_size",
+			     test_set_header_size) ) ||
         (NULL == CU_add_test(pSuite, "test_read_formatstring",
-			     test_read_formatstring) )
-      ) {
+			     test_read_formatstring) ) ||
+	(NULL == CU_add_test(pSuite, "test_size_of_formatstring",
+			     test_size_of_formatstring)) ||
+	(NULL == CU_add_test(pSuite, "test_translate_formatstring",
+			     test_translate_formatstring))
+	) {
       CU_cleanup_registry();
       return CU_get_error();
    }

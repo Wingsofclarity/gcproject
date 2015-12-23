@@ -94,6 +94,21 @@ uintptr_t read_formatstring(char* formatstring){
 }
 
 size_t size_of_object(uintptr_t header) {
+  if ((header % 4) == 3) {
+    
+  }
+  else if ((header % 4) == 2){
+    
+  }
+  else if ((header % 4) == 1) {
+    return (size_t)0;
+    // Not sure how to represent "This has been moved"
+  }
+  else {
+    char* formatstring = (char*)header;
+    size_t final_size = size_of_formatstring(formatstring);
+    return final_size;
+  }
   return (size_t)2;
 }
 
@@ -135,8 +150,8 @@ char* translate_formatstring (char* formatstring) {
       if ( first_digit >= 0 ) {
 	int int_size = ( i - first_digit );
 	char* digit = calloc(1,  sizeof(char) * ( int_size) );
-	/*I think we have a memory leak due to digit not being null
-	 terminated, but I'm not 100%.*/
+	/*I think we have a memory leak here. digit is also not being 
+	  null terminated*/
 	
 	for ( int x = 0; x < int_size; x++ ) {
 	  *(digit + ( sizeof(char) * x ) ) = *(formatstring +
