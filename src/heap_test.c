@@ -11,7 +11,7 @@ struct testStruct{
 typedef struct testStruct TS;
 void test(TS *a,int c);
 
-
+/*
 int main(){
   heap *h = new_heap(1024);
   
@@ -25,7 +25,7 @@ int main(){
   test(b,6);
   printf("Print value: %i\n",b->i);
   
-  traverse_heap(h,printHeap);
+  //traverse_heap(h,printHeap); //read comments in heap.c:68
 
   puts("Test completed.");
   return 0;
@@ -39,3 +39,4 @@ void test_maxi(void)
 {
   //CU_ASSERT(false);
 }
+*/

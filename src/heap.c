@@ -63,21 +63,30 @@ void* heap_alloc_format(heap* h, char *formatstring){
 }
 
 /*Beginning to traverse heap*/
-void traverse_heap(heap *h, void(*f)(uintptr_t)){
+void traverse_heap(heap *h, uintptr_t pointer){
   /*
     Du ska inte gå igenom hela heapen. Den här funktionen ska ta emot
     en void pekare till ett objekt på heapen och sen kolla igenom det
     objektet för att lista ut om det finns en pekare eller inte i det.
-    
-    hs->start är 100% irrelevant för dig, då de ska checkas i stack 
-    traversal.
 
+    Detta borde dessutom vara en egen modul om möjligt, det blir mycket
+    kod i heap annars.
+
+    Jag ser hellre att vi har getter funktioner för att be om gränserna
+    för heapen, t.ex:
+
+    uintptr_t get_start (heap* h){
+    return h->start;
+    }
+    
     Funktionen ska förmodligen byggas ungefär såhär:
     1. Ta emot pekare till ett objekt.
     2. Plocka ut headern genom att backa sizeof(uintptr_t).
-    3. Om heapen är "osäker" (fråga Gustav), kolla headern om den 
-       innehåller pekare.
+    3. Om heapen är "osäker" (fråga Gustav), kolla headern om det 
+       nuvarande objektet innehåller pekare.
     4. Kolla om de pekarna pekar på nuvarande heap.
+    5. Om ja, skicka pekarna till funktionen som anropar denna i gc.h 
+       (den är ej byggd ännu).
   */
     
   heap_side* hs = heap_active_side(h);
@@ -88,7 +97,7 @@ void traverse_heap(heap *h, void(*f)(uintptr_t)){
   while(start < end) 
       {
 	
-        f(start);
+        //f(start);
 	start = start + 8;   // TODO: Ã¤ndra 8an till sizen av actuellt objekt! /Peter
       }
 }
