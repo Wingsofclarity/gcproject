@@ -28,36 +28,7 @@ struct heap {
   bool active_side; //true for left, false for right.
 };
 
-heap* new_heap_old(int size){
-  //The heap currently only works with ints, as the implemenation details
-  //will mean the allocation is done differently.
-  
-  heap* temp_heap = (heap*)malloc(sizeof(heap));
-  temp_heap->bytes = size;
-  temp_heap->active_side = true;
-
-  heap_side* leftside = (heap_side*)malloc(sizeof(heap_side));
-  heap_side* rightside = (heap_side*)malloc(sizeof(heap_side));
-  
-  leftside->bytes = size;
-  rightside->bytes = size;
-
-  leftside->start = (uintptr_t)malloc( (INTSIZE + PTRSIZE) * size );
-  rightside->start = (uintptr_t)malloc( (INTSIZE + PTRSIZE) * size);
-  
-  leftside->last_block = (leftside->start + ( (INTSIZE + PTRSIZE)*size));
-  rightside->last_block =(rightside->start + ((INTSIZE + PTRSIZE)*size));
-
-  leftside->first_free = leftside->start;
-  rightside->first_free = rightside->start;
-
-  temp_heap->left_side = leftside;
-  temp_heap->right_side = rightside;
-  
-  return temp_heap;
-}
-
-heap* new_heap(size_t bytes){
+heap* new_heap_old(size_t bytes){
   heap* temp_heap = (heap*)malloc(sizeof(heap));
   // Is this neccesary?
   temp_heap->bytes = bytes;
