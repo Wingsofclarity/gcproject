@@ -34,6 +34,7 @@
 
 # Compiled files
 main
+stackTest
 
 # Emacs weird files
 *~
