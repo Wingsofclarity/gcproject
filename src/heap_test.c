@@ -1,7 +1,7 @@
 #include "heap.h"
 #include <stdio.h>
 #include <assert.h>
-#include <CUnit/Basic.h>
+//#include <CUnit/Basic.h>
 
 struct testStruct{
   int i;
@@ -11,8 +11,12 @@ struct testStruct{
 typedef struct testStruct TS;
 void test(TS *a,int c);
 
-/*
+
 int main(){
+  return 0;
+}
+
+  /*
   heap *h = new_heap(1024);
   
   TS *a=heap_alloc_format(h,"ii");

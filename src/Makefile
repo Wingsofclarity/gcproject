@@ -2,6 +2,7 @@ TARGET = main
 LIBS = -lm
 CC = gcc
 CFLAGS = -ggdb -Wall -Werror -std=c11 -lcunit
+CFLAGS_NO_TEST = -ggdb -Wall -Werror -std=c11
 
 default: $(TARGET) run
 all: default
@@ -35,7 +36,7 @@ clean-win:
 	-del *.h~
 
 hyp:
-	@ $(CC) $(CFLAGS) heap.c header.c heap_test.c -o heaptest
+	@ $(CC) $(CFLAGS_NO_TEST) heap.c header.c heap_test.c heap_traversal.c -o heaptest
 
 stackTest:
 	@ $(CC) $(CFLAGS) stack.c stack.h -o stackTest

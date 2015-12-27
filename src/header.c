@@ -94,23 +94,26 @@ uintptr_t read_formatstring(char* formatstring){
   return formatbinary;
 }
 
-uintptr_t new_header (char* formatstring) {
+
+//Function didn't compile (no return value). Commented (?) it out //Gustav
+/*
+ uintptr_t new_header (char* formatstring) {
 
   char* newFormat = translate_formatstring(formatstring);
   size_t header_size = size_of_formatstring(newFormat);
   
   if (header_size > 28){
-    /*Need to return both a formatstring and a header.
-      what to do?
+    //Need to return both a formatstring and a header.
+      //what to do?
       
-      Make sure returned uintptr_t ends in 00.
-    */
+      //Make sure returned uintptr_t ends in 00.
+    
     
   }
   else {
     
   }
-}
+  }*/
 
 size_t size_of_object(uintptr_t header) {
   if ((header % 4) == 3) {

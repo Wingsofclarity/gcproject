@@ -1,7 +1,3 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdint.h>
-
 #include "heap.h"
 #include "header.h"
 
@@ -40,6 +36,8 @@ heap_side *new_heap_side(size_t size){
 }
 
 /*OBS: Changed return type from unitptr_t to void* */
+//Why? /Gustav
+
 void* heap_alloc_format(heap* h, char *formatstring){
   uintptr_t a = set_header_size(formatstring);
   size_t size = size_of_object(a);
@@ -47,73 +45,35 @@ void* heap_alloc_format(heap* h, char *formatstring){
 
   // TODO: Detta ger fel nÃ¤r man vill traversera heapen /Peter
   // Vad för fel, får gärna beskriva mer än bara "fel".
-  /* 
-    if (!has_space(hs,size)){
+  // Gustav is confused. /Gustav
+  
+  if (!has_space(hs,size)){
     heap_switch(h);
     hs = heap_active_side(h);
-  
-    if(!has_space(hs,size)){
-    // Error
-    }
-    }
+    //Switch side everywhere
     
-  */
+    if(!has_space(hs,size)){
+      //If there is no space at this point, then the heap is simply too small.
+      perror("Heap too small too allocate.");
+      exit(0);
+    }
+  }
   
   uintptr_t r = hs->free;
   hs->free = hs->free+size;
-  printf("ALLOCATED: %lu\n",r);  // OBS: TemporÃ¤r printsats,tas bort sen! 
+  //printf("ALLOCATED: %lu\n",r);
   void *p = &r;
   return p;
 }
 
-/*Beginning to traverse heap*/
-void traverse_heap(heap *h, uintptr_t pointer){
-  /*
-    Du ska inte gå igenom hela heapen. Den här funktionen ska ta emot
-    en void pekare till ett objekt på heapen och sen kolla igenom det
-    objektet för att lista ut om det finns en pekare eller inte i det.
-
-    Detta borde dessutom vara en egen modul om möjligt, det blir mycket
-    kod i heap annars.
-
-    Jag ser hellre att vi har getter funktioner för att be om gränserna
-    för heapen, t.ex:
-
-    uintptr_t get_start (heap* h){
-    return h->start;
-    }
-    
-    Funktionen ska förmodligen byggas ungefär såhär:
-    1. Ta emot pekare till ett objekt.
-    2. Plocka ut headern genom att backa sizeof(uintptr_t).
-    3. Om heapen är "osäker" (fråga Gustav), kolla headern om det 
-       nuvarande objektet innehåller pekare.
-    4. Kolla om de pekarna pekar på nuvarande heap.
-    5. Om ja, skicka pekarna till funktionen som anropar denna i gc.h 
-       (den är ej byggd ännu).
-  */
-    
-  heap_side* hs = heap_active_side(h);
-  uintptr_t start = hs->start;
-  uintptr_t end = hs->free;
-
-  printf("\n-----Traverse------\n");
-  while(start < end) 
-      {
-	
-        //f(start);
-	start = start + 8;   // TODO: Ã¤ndra 8an till sizen av actuellt objekt! /Peter
-      }
-}
-
 /*Testfunction: Print out the allocated addresses */
+//This name seams off. /Gustav
 void printHeap(uintptr_t n)
 {
   printf("Pointer: %lu ", n);
   printf("\tsize:%lu \n",sizeof(n));
   
 }
-
 
 void heap_switch(heap *h){
   h->active = !h->active;
@@ -126,4 +86,12 @@ heap_side *heap_active_side(heap *h){
 
 bool has_space(heap_side* hs, int size){
   return (hs->free+size>=hs->end);
+}
+
+uintptr_t heap_get_start(heap* h){
+  return heap_active_side(h)->start;
+}
+
+uintptr_t heap_get_free(heap* h){
+  return heap_active_side(h)->free;
 }
