@@ -19,22 +19,22 @@ struct heap_t{
 };
 
 bool has_space(heap_side*, int);
-heap_side *new_heap_side(int);
+heap_side *new_heap_side(size_t);
 heap_side *heap_active_side(heap *);
 void heap_switch(heap *);
 
-heap *new_heap(int size){
+heap *new_heap(size_t size){
   heap *h = (heap*) malloc(sizeof(heap));
   h->a=new_heap_side(size/2);
   h->b=new_heap_side(size/2);
   return h;
 }
 
-heap_side *new_heap_side(int size){
+heap_side *new_heap_side(size_t size){
   heap_side* hs = malloc(sizeof(heap_side)+size);
   hs->start = (uintptr_t) (hs+sizeof(heap_side));
   hs->free = hs->start;
-  hs->end = (uintptr_t) (hs+sizeof(heap_side)+size);
+  hs->end = (uintptr_t) (hs->start+size);
   return hs;
 }
 
