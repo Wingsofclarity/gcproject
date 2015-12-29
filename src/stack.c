@@ -10,20 +10,14 @@
 // Bottom of the stack
 extern char **environ;
 
-// For testing stuff
-uintptr_t runs = 0;
-uintptr_t comb = 0;
-
 // Gets a pointer to just above the stack
 uintptr_t getStartPoint() {
 	return (uintptr_t)(__builtin_frame_address(0));
 }
 
 // What we're here for
-
-void stackTrace(void stackFunc(void*)){
-  /*  Gives compiling error, please fix:
-    stack.c:28: Undefined reference to 'environ'
+void stackTrace(void* stackFunc(void*)){
+// If you have problem compiling this, don't do it on a windows computer
 	DumpRegisters();
 	void *current;
 	uintptr_t end; 
@@ -34,19 +28,8 @@ void stackTrace(void stackFunc(void*)){
 	else {end = stackBot;}
 	while (tracker < end){
 		current = (void*)(tracker);
-		stackFunc(current);
+		current = stackFunc(current);
 		tracker = tracker + iterator;
-	}*/
-}
-// Testing stuff
-void stackTester(void* maybePointer){
-	runs++;
-	comb = comb + *(uintptr_t*)(maybePointer);
+	}
 }
 
-// Testing stuff
-void test_stack (void){
-	stackTrace(stackTester);
-	printf("%"PRIuPTR"\n", comb);
-	printf("%"PRIuPTR"\n", runs);
-}

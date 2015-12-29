@@ -27,18 +27,16 @@ gdb:
 	gdb ./$(TARGET)
 
 clean:
-	-rm -f *.o
-	-rm -f $(TARGET)
+	rm -f *.o
+	rm -f *.d
+	rm -f *.gch
+	rm -f $(TARGET)
 clean-win:
-	-del *.o
-	-del $(TARGET)
-	-del *.d
-	-del *.h~
+	del *.o
+	del $(TARGET)
+	del *.d
+	del *.h~
 
 hyp:
 	@ $(CC) $(CFLAGS_NO_TEST) heap.c header.c heap_test.c heap_traversal.c -o heaptest
 
-stackTest:
-	@ $(CC) $(CFLAGS) stack.c stack.h -o stackTest
-	./stackTest 1
-	./stackTest 1 2
