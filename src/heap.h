@@ -11,7 +11,7 @@ typedef struct heap_side_t heap_side;
 
 heap *new_heap();
 
-void *heap_alloc_format(heap*, char *);
+uintptr_t *heap_alloc_format(heap*, char *);
 
 bool has_space(heap_side*, int);
 

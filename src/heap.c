@@ -1,4 +1,4 @@
-#include "heap.h"
+brew reinsta#include "heap.h"
 #include "header.h"
 
 struct heap_side_t{
@@ -38,7 +38,7 @@ heap_side *new_heap_side(size_t size){
 /*OBS: Changed return type from unitptr_t to void* */
 //Why? /Gustav
 
-void* heap_alloc_format(heap* h, char *formatstring){
+uintptr_t *heap_alloc_format(heap* h, char *formatstring){
   uintptr_t a = set_header_size(formatstring);
   size_t size = size_of_object(a);
   heap_side* hs = heap_active_side(h);
