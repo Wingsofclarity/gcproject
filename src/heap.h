@@ -9,11 +9,9 @@
 typedef struct heap_t heap;
 typedef struct heap_side_t heap_side;
 
-heap *new_heap();
+heap *new_heap(size_t);
 
 uintptr_t *heap_alloc_format(heap*, char *);
-
-bool has_space(heap_side*, int);
 
 heap_side *heap_active_side(heap *);
 
@@ -26,5 +24,7 @@ void printHeap(uintptr_t);
 uintptr_t heap_get_start(heap*);
 
 uintptr_t heap_get_free(heap*);
+
+void heap_free(heap*);
 
 #endif

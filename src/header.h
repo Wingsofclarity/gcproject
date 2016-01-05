@@ -2,6 +2,7 @@
 #define HEADER_H_
 
 #include <stdint.h>
+#include <stdlib.h>
 
 uintptr_t set_header_size(char*);
 

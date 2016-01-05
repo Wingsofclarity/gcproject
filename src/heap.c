@@ -1,5 +1,6 @@
-brew reinsta#include "heap.h"
+#include "heap.h"
 #include "header.h"
+#include <stdio.h> //for debugging
 
 struct heap_side_t{
   uintptr_t start;
@@ -18,12 +19,13 @@ bool has_space(heap_side*, int);
 heap_side *new_heap_side(size_t);
 heap_side *heap_active_side(heap *);
 void heap_switch(heap *);
+void heap_side_free(heap_side*);
 
 heap *new_heap(size_t size){
   heap *h = (heap*) malloc(sizeof(heap));
   h->a=new_heap_side(size/2);
   h->b=new_heap_side(size/2);
-  h->active =true;
+  h->active = true;
   return h;
 }
 
@@ -35,17 +37,14 @@ heap_side *new_heap_side(size_t size){
   return hs;
 }
 
-/*OBS: Changed return type from unitptr_t to void* */
-//Why? /Gustav
-
 uintptr_t *heap_alloc_format(heap* h, char *formatstring){
+  puts("Trace!");
   uintptr_t a = set_header_size(formatstring);
+  puts("Trace!");
   size_t size = size_of_object(a);
+  puts("Trace!");
   heap_side* hs = heap_active_side(h);
-
-  // TODO: Detta ger fel nÃ¤r man vill traversera heapen /Peter
-  // Vad för fel, får gärna beskriva mer än bara "fel".
-  // Gustav is confused. /Gustav
+  puts("Trace!");
   
   if (!has_space(hs,size)){
     heap_switch(h);
@@ -61,7 +60,6 @@ uintptr_t *heap_alloc_format(heap* h, char *formatstring){
   
   uintptr_t r = hs->free;
   hs->free = hs->free+size;
-  //printf("ALLOCATED: %lu\n",r);
   void *p = &r;
   return p;
 }
@@ -84,6 +82,7 @@ heap_side *heap_active_side(heap *h){
   else return h->b;
 }
 
+
 bool has_space(heap_side* hs, int size){
   return (hs->free+size>=hs->end);
 }
@@ -94,4 +93,14 @@ uintptr_t heap_get_start(heap* h){
 
 uintptr_t heap_get_free(heap* h){
   return heap_active_side(h)->free;
+}
+
+void heap_free(heap *h){
+  heap_side_free(h->a);
+  heap_side_free(h->b);
+  free(h);  
+}
+
+void heap_side_free(heap_side *hs){
+  //TODO: Is nessary?
 }

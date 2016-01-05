@@ -2,7 +2,7 @@ TARGET = main
 LIBS = -lm
 CC = gcc
 CFLAGS = -ggdb -Wall -Werror -std=c11 -lcunit
-CFLAGS_NO_TEST = -ggdb -Wall -Werror -std=c11
+CFLAGS_SPECIAL = -ggdb -Wall -std=c11 -I/usr/local/Cellar/cunit/2.1-3/include /usr/local/Cellar/cunit/2.1-3/lib/libcunit.a
 
 default: $(TARGET) run
 all: default
@@ -35,8 +35,10 @@ clean-win:
 	-del *.d
 	-del *.h~
 
-hyp:
-	@ $(CC) $(CFLAGS_NO_TEST) heap.c header.c heap_test.c heap_traversal.c -o heaptest
+heapTest: heap.c heap.h header.c header.h  heap_test.c 
+	@ $(CC) $(CFLAGS_SPECIAL) heap.c heap.h header.c header.h  heap_test.c
+	@ ./a.out
+	@ rm a.out
 
 stackTest:
 	@ $(CC) $(CFLAGS) stack.c stack.h -o stackTest
