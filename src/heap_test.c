@@ -14,14 +14,15 @@ void test_new(void){
 }
 
 void test_alloc_empty(void){
-  heap_alloc_format(h, "");
+  uintptr_t *object = heap_alloc_format(h, "");
   uintptr_t a = heap_get_start(h);
   uintptr_t b = heap_get_start(h);
   CU_ASSERT(a!=b);
+  CU_ASSERT(object!=NULL);
 }
 
 void test_alloc_fitting(void){
-  heap_alloc_format(h,"ii");
+  uintptr_t *object = heap_alloc_format(h,"ii");
   CU_ASSERT(false);
 }
 
@@ -31,7 +32,7 @@ void test_alloc_large(void){
 
 void test_alloc_huge(void)
 {
-  heap_alloc_format(h,"iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii");
+  uintptr_t *object = heap_alloc_format(h,"iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii");
   CU_ASSERT(false);
 }
 
