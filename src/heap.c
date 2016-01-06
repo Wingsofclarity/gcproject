@@ -1,10 +1,14 @@
+#ifndef HEAP_C
+#define HEAP_C
+
+
 #include "heap.h"
 #include "header.h"
 #include <stdio.h> //for debugging
 #include <string.h>
-#define SIDE_SIZE 2048
+#define PAGE_SIZE 2048
 
-struct heap_side_t{
+struct heap_page_t{
   uintptr_t start;
   uintptr_t free;
   uintptr_t end;
@@ -13,39 +17,42 @@ struct heap_side_t{
 };
 
 struct heap_t{
-  heap_side* sides;
-  int num_sides;
-
+  heap_page* pages;
+  int num_pages;
 };
 
-bool has_space(heap_side*, size_t);
-heap_side *new_heap_side();
-heap_side *heap_active_free_side(heap *, size_t);
+bool has_space(heap_page*, size_t);
+heap_page * new_heap_page();
+heap_page *heap_active_free_page(heap *, size_t);
+heap_page *heap_passive_page(heap*);
 void heap_switch(heap *);
-void heap_side_free(heap_side*);
+void heap_page_free(heap_page*);
+int heap_num_active_pages(heap*);
+size_t heap_free_memory(heap *h);
+size_t heap_page_free_memory(heap_page *p);
 
 heap *new_heap(size_t size){
   heap *h = (heap*) malloc(sizeof(heap));
-  h->num_sides = size/SIDE_SIZE;
-  h->sides = malloc(h->num_sides*(sizeof(heap_side)+SIDE_SIZE));
-  //h->sides=heap_side[h->num_sides];
-  for (int i = 0; i<h->num_sides; i++){
-    h->sides[i]=*new_heap_side();
+  h->num_pages = size/PAGE_SIZE;
+  h->pages = malloc(h->num_pages*(sizeof(heap_page)+PAGE_SIZE));
+  //h->pages=heap_page[h->num_pages];
+  for (int i = 0; i<h->num_pages; i++){
+    h->pages[i]=*new_heap_page();
   }
   return h;
 }
 
-heap_side *new_heap_side(){
-  heap_side* hs = malloc(sizeof(heap_side)+SIDE_SIZE);
-  hs->start = (uintptr_t) (hs+sizeof(heap_side));
-  hs->free = hs->start;
-  hs->end = (uintptr_t) (hs->start+SIDE_SIZE);
-  hs->active = false;
-  hs->safe=false;
-  return hs;
+heap_page *new_heap_page(){
+  heap_page* p = malloc(sizeof(heap_page)+PAGE_SIZE);
+  p->start = (uintptr_t) (p+sizeof(heap_page));
+  p->free = p->start;
+  p->end = (uintptr_t) (p->start+PAGE_SIZE);
+  p->active = true;
+  p->safe=true;
+  return p;
 }
 
-uintptr_t *heap_alloc_format(heap* h, char *formatstring){
+uintptr_t *heap_alloc_format(heap* h, char *formatstring, bool safe){
   if (strcmp(formatstring,"")==0){
     return NULL;
   }
@@ -53,38 +60,52 @@ uintptr_t *heap_alloc_format(heap* h, char *formatstring){
   uintptr_t a = set_header_size(formatstring);
   size_t size = size_of_object(a);
   //size_t size=2; //CHEAT!
-  return heap_alloc(h, size);
+  return heap_alloc(h, size, safe);
 }
 
-uintptr_t *heap_alloc(heap* h, size_t size){
-  if (size>SIDE_SIZE){
+uintptr_t *heap_alloc(heap* h, size_t size, bool safe){
+  if (size>PAGE_SIZE){
     return NULL;
   }
   
-  heap_side* hs = heap_active_free_side(h, size);
+  heap_page* p = heap_active_free_page(h, size);
   
-  if (hs==NULL){
+  if (p==NULL){
     return NULL;
   }
   
-  uintptr_t r = hs->free;
-  hs->free = hs->free+size;
-  void *p = &r;
-  return p;
+  uintptr_t r = p->free;
+  p->free = p->free+size;
+
+  if (!safe){
+    p->active=false;
+  }
+  return &r;
 }
 
-heap_side *heap_active_free_side(heap *h, size_t size){
-  for (int i = 0; i<h->num_sides; i++){
-    if (has_space(&h->sides[i],size) &&
-	h->sides[i].active){
-      return &h->sides[i];
+heap_page *heap_active_free_page(heap *h, size_t size){
+  for (int i = 0; i<h->num_pages; i++){
+    /*printf("%d && %d \n", has_space(&h->pages[i],size),
+	   h->pages[i].active);*/
+    if (has_space(&h->pages[i],size) &&
+	h->pages[i].active){
+      return &h->pages[i];
     }
   }
   return NULL;
 }
 
-bool has_space(heap_side* hs, size_t size){
-  return (hs->free+size<=hs->end);
+heap_page *heap_passive_page(heap *h){
+  for (int i = 0; i<h->num_pages; i++){
+      if (!(h->pages[i].active)){
+      return &h->pages[i];
+    }
+  }
+  return NULL;
+}
+
+bool has_space(heap_page* p, size_t size){
+  return (p->free+size<=p->end);
 }
 
 uintptr_t heap_get_start(heap* h){
@@ -99,6 +120,30 @@ void heap_free(heap *h){
   free(h);  
 }
 
-void heap_side_free(heap_side *hs){
+void heap_page_free(heap_page *p){
   //TODO: Is nessary?
 }
+
+int heap_num_active_pages(heap* h){
+  int num = 0;
+  for (int i = 0; i<h->num_pages; ++i){
+    if (h->pages[i].active){
+      ++num;
+    }
+  }
+  return num;
+}
+
+size_t heap_free_memory(heap *h){
+  size_t a = 0;
+  for (int i = 0; i<h->num_pages; ++i){
+    a=+heap_page_free_memory(&h->pages[i]);
+  }
+  return a;
+}
+
+size_t heap_page_free_memory(heap_page *p){
+  return (size_t) p->start-p->free;
+}
+
+#endif //HEAP_C

@@ -7,15 +7,13 @@
 #include <stdio.h>
 
 typedef struct heap_t heap;
-typedef struct heap_side_t heap_side;
+typedef struct heap_page_t heap_page;
 
 heap *new_heap(size_t);
 
-uintptr_t *heap_alloc(heap*, size_t);
+uintptr_t *heap_alloc(heap*, size_t, bool);
 
-uintptr_t *heap_alloc_format(heap*, char *);
-
-heap_side *heap_active_side(heap *);
+uintptr_t *heap_alloc_format(heap*, char *, bool);
 
 void heap_switch(heap *);
 

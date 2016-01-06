@@ -16,16 +16,13 @@ void test_new(void){
 }
 
 void test_alloc_empty(void){
-  uintptr_t *object = heap_alloc_format(h, "");
+  uintptr_t *object = heap_alloc_format(h, "", true);
   CU_ASSERT(object==NULL);
 }
 
 void test_alloc_fitting(void){
-  uintptr_t *object = heap_alloc_format(h,"ii");
-  uintptr_t a = heap_get_start(h);
-  uintptr_t b = heap_get_free(h);
+  uintptr_t *object = heap_alloc(h,100, true);
   CU_ASSERT(object!=NULL);
-  CU_ASSERT(a!=b);
 }
 
 void test_alloc_large(void){
@@ -35,7 +32,7 @@ void test_alloc_large(void){
 void test_alloc_huge(void)
 {
   uintptr_t a = heap_get_free(h);
-  uintptr_t *object = heap_alloc_format(h,HUGE_FORMAT_STRING);
+  uintptr_t *object = heap_alloc(h,3000, true);
   uintptr_t b = heap_get_free(h);
   CU_ASSERT(object==NULL);
   CU_ASSERT(a==b);
@@ -43,7 +40,7 @@ void test_alloc_huge(void)
 
 int init_suite1()
 {
-  h = new_heap(1000);
+  h = new_heap(10000);
   return 0;
 }
 
