@@ -20,6 +20,7 @@ void test_new_heap(void){
   size_t memory = heap_free_memory(h);
   CU_ASSERT(memory==2048*h->num_pages);
   CU_ASSERT(h->num_pages==(int)(10000/2048));
+  CU_ASSERT(heap_passive_page(h)!=NULL);
 }
 
 

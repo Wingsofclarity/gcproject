@@ -30,6 +30,9 @@ clean:
 	-rm -f *~
 	-rm -f *.o
 	-rm -f $(TARGET)
+	-rm -fr *.dSYM
+	-rm -f *.gch
+
 clean-win:
 	-del *.o
 	-del $(TARGET)
