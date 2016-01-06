@@ -8,6 +8,7 @@
 #include <string.h>
 #define PAGE_SIZE 2048
 
+/*
 struct heap_page_t{
   uintptr_t start;
   uintptr_t free;
@@ -20,6 +21,7 @@ struct heap_t{
   heap_page* pages;
   int num_pages;
 };
+*/
 
 bool has_space(heap_page*, size_t);
 heap_page * new_heap_page();
@@ -39,6 +41,7 @@ heap *new_heap(size_t size){
   for (int i = 0; i<h->num_pages; i++){
     h->pages[i]=*new_heap_page();
   }
+  h->pages[0].active=false;
   return h;
 }
 
@@ -137,13 +140,13 @@ int heap_num_active_pages(heap* h){
 size_t heap_free_memory(heap *h){
   size_t a = 0;
   for (int i = 0; i<h->num_pages; ++i){
-    a=+heap_page_free_memory(&h->pages[i]);
+    a=a+heap_page_free_memory(&h->pages[i]);
   }
   return a;
 }
 
 size_t heap_page_free_memory(heap_page *p){
-  return (size_t) p->start-p->free;
+  return (size_t) p->end-p->free;
 }
 
 #endif //HEAP_C

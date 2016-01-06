@@ -8,25 +8,44 @@
 
 
 heap* h;
+heap_page* p;
 
-void test_new(void){
-  uintptr_t a = heap_get_start(h);
-  uintptr_t b = heap_get_free(h);
-  CU_ASSERT(a==b);
+void test_new_page(void){
+  size_t memory = heap_page_free_memory(p);
+  CU_ASSERT(memory==2048);
+  CU_ASSERT(p->free==p->start);
 }
+
+void test_new_heap(void){
+  size_t memory = heap_free_memory(h);
+  CU_ASSERT(memory==2048*h->num_pages);
+  CU_ASSERT(h->num_pages==(int)(10000/2048));
+}
+
 
 void test_alloc_empty(void){
   uintptr_t *object = heap_alloc_format(h, "", true);
   CU_ASSERT(object==NULL);
+  size_t memory = heap_free_memory(h);
+  CU_ASSERT(memory==2048*h->num_pages);
 }
 
 void test_alloc_fitting(void){
+  size_t memory_before = heap_free_memory(h);
   uintptr_t *object = heap_alloc(h,100, true);
   CU_ASSERT(object!=NULL);
+  size_t memory_after = heap_free_memory(h);
+  CU_ASSERT(memory_after==memory_before-100);
 }
 
 void test_alloc_large(void){
-    CU_ASSERT(false);
+  int pages_to_fill = heap_num_active_pages(h);
+  for (int i = 0; i<pages_to_fill; ++i){
+    uintptr_t *object = heap_alloc(h,1200,true);
+    CU_ASSERT(object!=NULL);
+  }
+  uintptr_t *object = heap_alloc(h,2000,true);
+  CU_ASSERT(object==NULL);
 }
 
 void test_alloc_huge(void)
@@ -41,6 +60,7 @@ void test_alloc_huge(void)
 int init_suite1()
 {
   h = new_heap(10000);
+  p = new_heap_page();
   return 0;
 }
 
@@ -70,7 +90,8 @@ int main(void)
    }
 
    /* add the tests to the suite */
-   if ((NULL == CU_add_test(pSuite, "test of new", test_new)) ||
+   if ((NULL == CU_add_test(pSuite, "test of new page", test_new_page)) ||
+       (NULL == CU_add_test(pSuite, "test of new heap", test_new_heap)) ||
        (NULL == CU_add_test(pSuite, "test of empty", test_alloc_empty)) ||
        (NULL == CU_add_test(pSuite, "test of fitting", test_alloc_fitting)) ||
        (NULL == CU_add_test(pSuite, "test of large", test_alloc_large)) ||
