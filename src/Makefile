@@ -27,6 +27,7 @@ gdb:
 	gdb ./$(TARGET)
 
 clean:
+	-rm -f *~
 	-rm -f *.o
 	-rm -f $(TARGET)
 clean-win:

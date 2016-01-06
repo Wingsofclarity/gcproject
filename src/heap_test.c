@@ -4,26 +4,28 @@
 #include <CUnit/Basic.h>
 #include <stdbool.h>
 #include <stdint.h>
+#define HUGE_FORMAT_STRING "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii"
+
 
 heap* h;
 
 void test_new(void){
   uintptr_t a = heap_get_start(h);
-  uintptr_t b = heap_get_start(h);
+  uintptr_t b = heap_get_free(h);
   CU_ASSERT(a==b);
 }
 
 void test_alloc_empty(void){
   uintptr_t *object = heap_alloc_format(h, "");
-  uintptr_t a = heap_get_start(h);
-  uintptr_t b = heap_get_start(h);
-  CU_ASSERT(a!=b);
-  CU_ASSERT(object!=NULL);
+  CU_ASSERT(object==NULL);
 }
 
 void test_alloc_fitting(void){
   uintptr_t *object = heap_alloc_format(h,"ii");
-  CU_ASSERT(false);
+  uintptr_t a = heap_get_start(h);
+  uintptr_t b = heap_get_free(h);
+  CU_ASSERT(object!=NULL);
+  CU_ASSERT(a!=b);
 }
 
 void test_alloc_large(void){
@@ -32,8 +34,11 @@ void test_alloc_large(void){
 
 void test_alloc_huge(void)
 {
-  uintptr_t *object = heap_alloc_format(h,"iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii");
-  CU_ASSERT(false);
+  uintptr_t a = heap_get_free(h);
+  uintptr_t *object = heap_alloc_format(h,HUGE_FORMAT_STRING);
+  uintptr_t b = heap_get_free(h);
+  CU_ASSERT(object==NULL);
+  CU_ASSERT(a==b);
 }
 
 int init_suite1()
@@ -68,11 +73,11 @@ int main(void)
    }
 
    /* add the tests to the suite */
-   if ((NULL == CU_add_test(pSuite, "test of ...1", test_new)) ||
-       (NULL == CU_add_test(pSuite, "test of ...1", test_alloc_empty)) ||
-       (NULL == CU_add_test(pSuite, "test of ...1", test_alloc_fitting)) ||
-       (NULL == CU_add_test(pSuite, "test of ...1", test_alloc_large)) ||
-       (NULL == CU_add_test(pSuite, "test of ...2", test_alloc_huge)))
+   if ((NULL == CU_add_test(pSuite, "test of new", test_new)) ||
+       (NULL == CU_add_test(pSuite, "test of empty", test_alloc_empty)) ||
+       (NULL == CU_add_test(pSuite, "test of fitting", test_alloc_fitting)) ||
+       (NULL == CU_add_test(pSuite, "test of large", test_alloc_large)) ||
+       (NULL == CU_add_test(pSuite, "test of huge", test_alloc_huge)))
    {
       CU_cleanup_registry();
       return CU_get_error();

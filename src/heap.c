@@ -1,6 +1,7 @@
 #include "heap.h"
 #include "header.h"
 #include <stdio.h> //for debugging
+#include <string.h>
 
 struct heap_side_t{
   uintptr_t start;
@@ -15,7 +16,7 @@ struct heap_t{
   bool active;
 };
 
-bool has_space(heap_side*, int);
+bool has_space(heap_side*, size_t);
 heap_side *new_heap_side(size_t);
 heap_side *heap_active_side(heap *);
 void heap_switch(heap *);
@@ -38,9 +39,20 @@ heap_side *new_heap_side(size_t size){
 }
 
 uintptr_t *heap_alloc_format(heap* h, char *formatstring){
+  if (strcmp(formatstring,"")==0){
+    return NULL;
+  }
+  
   uintptr_t a = set_header_size(formatstring);
-  //size_t size = size_of_object(a);
-  size_t size=2; //CHEAT!
+  size_t size = size_of_object(a);
+  //size_t size=2; //CHEAT!
+  return heap_alloc(h, size);
+}
+
+uintptr_t *heap_alloc(heap* h, size_t size){
+  /*if (size>2048){
+    return NULL;
+  }*/
   heap_side* hs = heap_active_side(h);
   
   if (!has_space(hs,size)){
@@ -50,7 +62,7 @@ uintptr_t *heap_alloc_format(heap* h, char *formatstring){
     
     if(!has_space(hs,size)){
       //If there is no space at this point, then the heap is simply too small.
-      //perror("Heap too small too allocate.");
+      perror("-Debug Heap too small too allocate.");
       return NULL;
     }
   }
@@ -71,7 +83,7 @@ void printHeap(uintptr_t n)
 }
 
 void heap_switch(heap *h){
-  h->active = !h->active;
+  //h->active = !h->active;
 }
 
 heap_side *heap_active_side(heap *h){
@@ -79,9 +91,8 @@ heap_side *heap_active_side(heap *h){
   else return h->b;
 }
 
-
-bool has_space(heap_side* hs, int size){
-  return (hs->free+size>=hs->end);
+bool has_space(heap_side* hs, size_t size){
+  return (hs->free+size<=hs->end);
 }
 
 uintptr_t heap_get_start(heap* h){
