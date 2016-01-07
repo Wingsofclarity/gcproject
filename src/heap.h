@@ -11,9 +11,9 @@ typedef struct heap_page_t heap_page;
 
 heap *new_heap(size_t);
 
-uintptr_t *heap_alloc(heap*, size_t, bool);
+uintptr_t heap_alloc(heap*, size_t, bool);
 
-uintptr_t *heap_alloc_format(heap*, char *, bool);
+uintptr_t heap_alloc_format(heap*, char *, bool);
 
 void heap_switch(heap *);
 

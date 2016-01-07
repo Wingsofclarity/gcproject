@@ -25,16 +25,16 @@ void test_new_heap(void){
 
 
 void test_alloc_empty(void){
-  uintptr_t *object = heap_alloc_format(h, "", true);
-  CU_ASSERT(object==NULL);
+  uintptr_t object = heap_alloc_format(h, "", true);
+  CU_ASSERT(object==0);
   size_t memory = heap_free_memory(h);
   CU_ASSERT(memory==2048*h->num_pages);
 }
 
 void test_alloc_fitting(void){
   size_t memory_before = heap_free_memory(h);
-  uintptr_t *object = heap_alloc(h,100, true);
-  CU_ASSERT(object!=NULL);
+  uintptr_t object = heap_alloc(h,100, true);
+  CU_ASSERT(object!=0);
   size_t memory_after = heap_free_memory(h);
   CU_ASSERT(memory_after==memory_before-100);
 }
@@ -42,19 +42,19 @@ void test_alloc_fitting(void){
 void test_alloc_large(void){
   int pages_to_fill = heap_num_active_pages(h);
   for (int i = 0; i<pages_to_fill; ++i){
-    uintptr_t *object = heap_alloc(h,1200,true);
-    CU_ASSERT(object!=NULL);
+    uintptr_t object = heap_alloc(h,1200,true);
+    CU_ASSERT(object!=0);
   }
-  uintptr_t *object = heap_alloc(h,2000,true);
-  CU_ASSERT(object==NULL);
+  uintptr_t object = heap_alloc(h,2000,true);
+  CU_ASSERT(object==0);
 }
 
 void test_alloc_huge(void)
 {
   uintptr_t a = heap_get_free(h);
-  uintptr_t *object = heap_alloc(h,3000, true);
+  uintptr_t object = heap_alloc(h,3000, true);
   uintptr_t b = heap_get_free(h);
-  CU_ASSERT(object==NULL);
+  CU_ASSERT(object==0);
   CU_ASSERT(a==b);
 }
 

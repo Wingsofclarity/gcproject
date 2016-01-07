@@ -55,9 +55,9 @@ heap_page *new_heap_page(){
   return p;
 }
 
-uintptr_t *heap_alloc_format(heap* h, char *formatstring, bool safe){
+uintptr_t heap_alloc_format(heap* h, char *formatstring, bool safe){
   if (strcmp(formatstring,"")==0){
-    return NULL;
+    return 0;
   }
   
   uintptr_t a = set_header_size(formatstring);
@@ -66,15 +66,15 @@ uintptr_t *heap_alloc_format(heap* h, char *formatstring, bool safe){
   return heap_alloc(h, size, safe);
 }
 
-uintptr_t *heap_alloc(heap* h, size_t size, bool safe){
+uintptr_t heap_alloc(heap* h, size_t size, bool safe){
   if (size>PAGE_SIZE){
-    return NULL;
+    return 0;
   }
   
   heap_page* p = heap_active_free_page(h, size);
   
   if (p==NULL){
-    return NULL;
+    return 0;
   }
   
   uintptr_t r = p->free;
@@ -83,7 +83,7 @@ uintptr_t *heap_alloc(heap* h, size_t size, bool safe){
   if (!safe){
     p->active=false;
   }
-  return &r;
+  return r;
 }
 
 heap_page *heap_active_free_page(heap *h, size_t size){

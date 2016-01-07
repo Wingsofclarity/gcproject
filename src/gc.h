@@ -8,15 +8,15 @@
 #define __gc__
 
 /// The opaque data type holding all the heap data
-typedef struct heap heap_t;
+typedef struct heap_t heap;
 
 /// The signature of the trace function 
-typedef void *(*trace_f)(heap_t *h, void *obj);
+typedef void *(*trace_f)(heap *h, void *obj);
 
 /// The signature of object-specific trace functions. It will be
 /// called for its specific objects, and be given a generic trace
 /// function f to be called on each pointer inside obj.
-typedef void *(*s_trace_f)(heap_t *h, trace_f f, void *obj);
+typedef void *(*s_trace_f)(heap *h, trace_f f, void *obj);
 
 /// Create a new heap with bytes total size (including both spaces
 /// and metadata), meaning strictly less than bytes will be
@@ -26,24 +26,25 @@ typedef void *(*s_trace_f)(heap_t *h, trace_f f, void *obj);
 /// \param unsafe_stack true if pointers on the stack are to be considered unsafe pointers
 /// \param gc_threshold the memory pressure at which gc should be triggered (1.0 = full memory)
 /// \return the new heap
-heap_t *h_init(size_t bytes, bool unsafe_stack, float gc_threshold);
+heap *h_init(size_t bytes, bool unsafe_stack, float gc_threshold);
 
 /// Delete a heap.
 ///
 /// \param h the heap
-void h_delete(heap_t *h);
+void h_delete(heap *h);
 
 /// Delete a heap and trace, killing off stack pointers.
 ///
 /// \param h the heap 
 /// \param dbg_value a value to be written into every pointer into h on the stack
-void h_delete_dbg(heap_t *h, void *dbg_value);
+void h_delete_dbg(heap *h, void *dbg_value);
 
 /// Allocate a new object on a heap with a given format string.
 ///
 /// Valid characters in format strings are:
 /// - 'i' -- for sizeof(int) bytes 'raw' data
 /// - 'l' -- for sizeof(long) bytes 'raw' data
+
 /// - 'f' -- for sizeof(float) bytes 'raw' data
 /// - 'c' -- for sizeof(char) bytes 'raw' data
 /// - 'd' -- for sizeof(double) bytes 'raw' data
@@ -55,7 +56,7 @@ void h_delete_dbg(heap_t *h, void *dbg_value);
 /// \return the newly allocated object
 ///
 /// Note: the heap does *not* retain an alias to layout.
-void *h_alloc_struct(heap_t *h, char *layout);
+void *h_alloc_struct(heap *h, char *layout);
 
 /// Allocate a new object on a heap with a given size, and
 /// object-specific trace function. 
@@ -69,7 +70,7 @@ void *h_alloc_struct(heap_t *h, char *layout);
 /// \param bytes the size in bytes
 /// \param f the object-specific trace function
 /// \return the newly allocated object
-void *h_alloc_union(heap_t *h, size_t bytes, s_trace_f f);
+void *h_alloc_union(heap *h, size_t bytes, s_trace_f f);
 
 /// Allocate a new object on a heap with a given size.
 ///
@@ -79,7 +80,7 @@ void *h_alloc_union(heap_t *h, size_t bytes, s_trace_f f);
 /// \param h the heap
 /// \param bytes the size in bytes
 /// \return the newly allocated object
-void *h_alloc_data(heap_t *h, size_t bytes);
+void *h_alloc_data(heap *h, size_t bytes);
 
 /// Manually trigger garbage collection.
 ///
@@ -88,7 +89,7 @@ void *h_alloc_data(heap_t *h, size_t bytes);
 ///
 /// \param h the heap
 /// \return the number of bytes collected
-size_t h_gc(heap_t *h);
+size_t h_gc(heap *h);
 
 /// Manually trigger garbage collection with the ability to 
 /// override the setting for how stack pointers are treated. 
@@ -99,13 +100,13 @@ size_t h_gc(heap_t *h);
 /// \param h the heap
 /// \param unsafe_stack true if pointers on the stack are to be considered unsafe pointers
 /// \return the number of bytes collected
-size_t h_gc_dbg(heap_t *h, bool unsafe_stack);
+size_t h_gc_dbg(heap *h, bool unsafe_stack);
 
 /// Returns the available free memory. 
 ///
 /// \param h the heap
 /// \return the available free memory. 
-size_t h_avail(heap_t *h);
+size_t h_avail(heap *h);
 
 /// Returns the bytes currently in use by user structures. This
 /// should not include the collector's own meta data. Notably,
@@ -114,6 +115,6 @@ size_t h_avail(heap_t *h);
 /// 
 /// \param h the heap
 /// \return the bytes currently in use by user structures. 
-size_t h_used(heap_t *h);
+size_t h_used(heap *h);
 
 #endif
