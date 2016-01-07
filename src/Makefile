@@ -41,7 +41,17 @@ clean-win:
 	del *.h~
 
 heapTest: heap.c heap.h header.c header.h  heap_test.c gc.h gc.c
-	@ $(CC) $(CFLAGS_SPECIAL) heap.c heap.h header.c header.h  heap_test.c gc.h gc.c
+	@ $(CC) $(CFLAGS_SPECIAL) heap.c heap.h header.c header.h  heap_test.c gc.h gc.c 
 	@ ./a.out
 	@ rm a.out
 
+gcTest: heap.c heap.h header.c header.h  gc_test.c gc.h gc.c
+	@ $(CC) $(CFLAGS_SPECIAL) heap.c heap.h header.c header.h  gc_test.c gc.h gc.c
+	@ ./a.out
+	@ rm a.out
+
+stackTest: 
+	$(CC) $(CFLAGS) src/stack.c src/stack.h testsrc/stacktest.c -o stackTest
+	./stackTest 1
+	./stackTest 1 2
+	rm stackTest
