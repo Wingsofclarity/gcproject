@@ -32,19 +32,16 @@ clean:
 	-rm -f $(TARGET)
 	-rm -fr *.dSYM
 	-rm -f *.gch
+	-rm -f *.d
 
 clean-win:
-	-del *.o
-	-del $(TARGET)
-	-del *.d
-	-del *.h~
+	del *.o
+	del $(TARGET)
+	del *.d
+	del *.h~
 
 heapTest: heap.c heap.h header.c header.h  heap_test.c gc.h gc.c
 	@ $(CC) $(CFLAGS_SPECIAL) heap.c heap.h header.c header.h  heap_test.c gc.h gc.c
 	@ ./a.out
 	@ rm a.out
 
-stackTest:
-	@ $(CC) $(CFLAGS) stack.c stack.h -o stackTest
-	./stackTest 1
-	./stackTest 1 2
