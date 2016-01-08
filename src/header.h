@@ -12,9 +12,17 @@ char* translate_formatstring(char*);
 
 uintptr_t new_header(char*);
 
-size_t size_of_object(uintptr_t);
+uintptr_t new_header_format(char *);
+
+uintptr_t new_header_bitlayout(size_t);
+
+size_t header_size_of_header(const uintptr_t);
+
+size_t header_size_of_object(const uintptr_t);
 
 size_t size_of_formatstring(char*);
+
+uintptr_t new_header_bitlayout(size_t);
 
 int int_pow(int, int);
 

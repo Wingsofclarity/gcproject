@@ -11,6 +11,7 @@
 
 #define PTRSIZE sizeof(uintptr_t)
 
+
 int int_pow (int base, int exponent){ //Used for bitwise manipulations.
   if (exponent == 0) return 1;
 
@@ -50,6 +51,15 @@ size_t char_to_size(char temp_char){
   }
   return 0;
 }
+
+uintptr_t new_header_format(char *s){
+  return (uintptr_t) (((int) s<<2) + 0);
+}
+
+uintptr_t new_header_bitlayout(size_t i){
+  return (uintptr_t) (((int) i<<2) + 3);
+}
+
 
 uintptr_t set_header_size(char* formatstring){
   uintptr_t final_header = 0;
@@ -95,7 +105,6 @@ uintptr_t read_formatstring(char* formatstring){
 }
 
 
-//Function didn't compile (no return value). Commented (?) it out //Gustav
 /*
  uintptr_t new_header (char* formatstring) {
 
@@ -115,25 +124,36 @@ uintptr_t read_formatstring(char* formatstring){
   }
   }*/
 
-size_t size_of_object(uintptr_t header) {
-  if ((header % 4) == 3) {
+size_t header_size_of_header(const uintptr_t header_arg){
+  printf("in header %i \n", header_arg);
+  //printf("in header %i \n", *a);
+  uintptr_t header = header_arg;
+  uintptr_t type = header;
+
+  header = header >> 2;
+  puts("Trace!1-");
+
+  if ((type % 4) == 3) {
+    puts("Trace!2-");
+    return (size_t) (header);
+  }
+  else if ((type % 4) == 2){
     
   }
-  else if ((header % 4) == 2){
-    
-  }
-  else if ((header % 4) == 1) {
+  else if ((type % 4) == 1) {
     //printf("\nHeader % 4 == 1\n");
     return (size_t)0;
     // Not sure how to represent "This has been moved"
   }
-  else {
-    char* formatstring = (char*)header;
-    size_t final_size = size_of_formatstring(formatstring);
-    return final_size;
+  else if (type % 4 == 0){
+    return size_of_formatstring((char*) header);
   }
 
   return (size_t)0;
+}
+
+size_t header_size_of_object(uintptr_t object) {
+  return header_size_of_header(object - sizeof(uintptr_t));
 }
 
 size_t size_of_formatstring(char* formatstring){
@@ -155,7 +175,7 @@ size_t size_of_formatstring(char* formatstring){
     }
   }
 
-  //printf("formatstring: %s is size: %d", formatstring, result);
+  //  printf("formatstring: %s is size: %d \n", formatstring, result);
   
   return result;
 }

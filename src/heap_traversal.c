@@ -1,21 +1,10 @@
-#include "heap.h"
 #include "heap_traversal.h"
+#include "header.h"
+#include <stdio.h>
 
+void page_trav(heap_page *p, void (*f) (uintptr_t));
 
-/*Beginning to traverse heap*/
-void traverse_heap(heap *h, uintptr_t pointer){
-  /*
-    Du ska inte gå igenom hela heapen. Den här funktionen ska ta emot
-    en void pekare till ett objekt på heapen och sen kolla igenom det
-    objektet för att lista ut om det finns en pekare eller inte i det.
-
-    Jag ser hellre att vi har getter funktioner för att be om gränserna
-    för heapen, t.ex:
-
-    uintptr_t get_start (heap* h){
-    return h->start;
-    }
-    
+/*
     Funktionen ska förmodligen byggas ungefär såhär:
     1. Ta emot pekare till ett objekt.
     2. Plocka ut headern genom att backa sizeof(uintptr_t).
@@ -24,16 +13,24 @@ void traverse_heap(heap *h, uintptr_t pointer){
     4. Kolla om de pekarna pekar på nuvarande heap.
     5. Om ja, skicka pekarna till funktionen som anropar denna i gc.h 
        (den är ej byggd ännu).
-  */
-    
-  uintptr_t start = heap_get_start(h);
-  uintptr_t end = heap_get_free(h);
+*/
 
-  printf("\n-----Traverse------\n");
-  while(start < end) 
-      {
-	
-        //f(start);
-	start = start + 8;   // TODO: Ändra 8:an till sizen av actuellt objekt! /Peter
-      }
+/*
+void heap_trav(heap *h, void (*f) (uintptr_t)){
+  heap_page *pages = heap_active_pages(h);
+  int num_pages = heap_num_active_pages(h);
+  for (int i = 0; i<num_pages; ++i){
+    puts("New page");
+    page_trav(&pages[i],f);
+  }
 }
+
+void page_trav(heap_page *p, void (*f) (uintptr_t)){
+  uintptr_t current = heap_page_get_start(p);
+  while (current<heap_page_get_free(p)){
+    //printf("%i \n", current);
+    f(current);
+    current = current + header_size_of_object(current);
+  }
+}
+*/

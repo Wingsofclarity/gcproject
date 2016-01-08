@@ -18,7 +18,7 @@ void *h_alloc_union(heap *h, size_t bytes, s_trace_f f){
 }
 
 void *h_alloc_data(heap *h, size_t bytes){
-  return (void *) heap_alloc(h,bytes, true);
+  return (void *) heap_alloc_raw(h,bytes, true);
 }
 
 size_t h_gc(heap *h){
